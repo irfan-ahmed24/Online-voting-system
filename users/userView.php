@@ -1,3 +1,7 @@
+<?php
+include "./../user_info.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -72,7 +76,7 @@
                   width="32"
                   height="32"
                 />
-                John Doe
+                <!-- <?php echo "$username" ?> -->
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li>
@@ -114,7 +118,9 @@
               >
                 <div class="row align-items-center">
                   <div class="col-md-8">
-                    <h2 class="mb-1">Welcome back, John!</h2>
+                    <h2 class="mb-1">Welcome back, 
+                      <!-- <?php echo "$name" ?> -->
+                    </h2>
                     <p class="mb-0 opacity-75">
                       Ready to participate in the democratic process? Check out
                       the latest elections below.

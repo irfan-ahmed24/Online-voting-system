@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,8 +20,8 @@
                     width="120"
                     height="120"
                   />
-                  <h5 class="card-title">John Doe</h5>
-                  <p class="text-muted">john.doe@example.com</p>
+                  <h5 class="card-title"></h5>
+                  <p class="text-muted"></p>
                   <span class="badge bg-success mb-3">Verified Voter</span>
                   <br />
                   <button class="btn btn-outline-primary btn-sm">
@@ -36,11 +37,11 @@
                 <div class="card-body">
                   <div class="d-flex justify-content-between mb-2">
                     <span>Elections Participated:</span>
-                    <strong>5</strong>
+                    <strong>0</strong>
                   </div>
                   <div class="d-flex justify-content-between mb-2">
                     <span>Votes Cast:</span>
-                    <strong>8</strong>
+                    <strong>0</strong>
                   </div>
                   <div class="d-flex justify-content-between">
                     <span>Member Since:</span>
@@ -60,11 +61,11 @@
                     <div class="row mb-3">
                       <div class="col-md-6">
                         <label class="form-label">First Name</label>
-                        <input type="text" class="form-control" value="John" />
+                        <input type="text" class="form-control" value="" />
                       </div>
                       <div class="col-md-6">
                         <label class="form-label">Last Name</label>
-                        <input type="text" class="form-control" value="Doe" />
+                        <input type="text" class="form-control" value="" />
                       </div>
                     </div>
 
@@ -74,7 +75,7 @@
                         <input
                           type="email"
                           class="form-control"
-                          value="john.doe@example.com"
+                          value=""
                         />
                       </div>
                       <div class="col-md-6">
@@ -82,7 +83,7 @@
                         <input
                           type="tel"
                           class="form-control"
-                          value="+1 234 567 8900"
+                          value=""
                         />
                       </div>
                     </div>
