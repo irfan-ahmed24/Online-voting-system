@@ -1,4 +1,6 @@
-
+<?php 
+include "./../user_info.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,13 +17,13 @@
               <div class="card">
                 <div class="card-body text-center">
                   <img
-                    src="https://via.placeholder.com/120"
+                    src="./../images/<?php echo isset($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : 'Guest.png'; ?>"
                     class="rounded-circle mb-3"
                     width="120"
                     height="120"
                   />
-                  <h5 class="card-title"></h5>
-                  <p class="text-muted"></p>
+                  <h5 class="card-title"><?php echo isset($_SESSION['user_name'])?$_SESSION['user_name']:"Guest" ?></h5>
+                  <p class="text-muted"><?php echo isset( $_SESSION['email'])? $_SESSION['email']:"users@.com" ?></p>
                   <span class="badge bg-success mb-3">Verified Voter</span>
                   <br />
                   <button class="btn btn-outline-primary btn-sm">
@@ -61,11 +63,11 @@
                     <div class="row mb-3">
                       <div class="col-md-6">
                         <label class="form-label">First Name</label>
-                        <input type="text" class="form-control" value="" />
+                        <input type="text" class="form-control" value="<?php echo isset($_SESSION['user_name'])?$_SESSION['user_name']:"Guest" ?>" />
                       </div>
                       <div class="col-md-6">
                         <label class="form-label">Last Name</label>
-                        <input type="text" class="form-control" value="" />
+                        <input type="text" class="form-control" value="<?php echo isset($_SESSION['user_name'])?$_SESSION['user_name']:"Guest" ?>" />
                       </div>
                     </div>
 
@@ -75,7 +77,7 @@
                         <input
                           type="email"
                           class="form-control"
-                          value=""
+                          value="<?php echo isset($_SESSION['email'])?$_SESSION['email']:"Guest" ?>"
                         />
                       </div>
                       <div class="col-md-6">
@@ -83,7 +85,7 @@
                         <input
                           type="tel"
                           class="form-control"
-                          value=""
+                          value="<?php echo isset($_SESSION['phone'])?$_SESSION['phone']:"01*********" ?>"
                         />
                       </div>
                     </div>
@@ -94,14 +96,15 @@
                         <input
                           type="date"
                           class="form-control"
-                          value="1990-05-15"
+                          value="<?php echo isset( $_SESSION['dateOfBirth'])? $_SESSION['dateOfBirth']:"" ?>"
                         />
                       </div>
                       <div class="col-md-6">
                         <label class="form-label">Gender</label>
                         <select class="form-select">
-                          <option selected>Male</option>
+                          <option selected><?php echo isset( $_SESSION['gender'])? $_SESSION['gender']:"" ?></option>
                           <option>Female</option>
+                          <option>Male</option>
                           <option>Other</option>
                           <option>Prefer not to say</option>
                         </select>
@@ -110,8 +113,7 @@
 
                     <div class="mb-3">
                       <label class="form-label">Address</label>
-                      <textarea class="form-control" rows="3">
-123 Main Street, City, State 12345</textarea
+                      <textarea class="form-control" rows="3"><?php echo isset(  $_SESSION['address'])?  $_SESSION['address']:"" ?></textarea
                       >
                     </div>
 
@@ -121,19 +123,10 @@
                         <input
                           type="text"
                           class="form-control"
-                          value="ID123456789"
+                          value="<?php echo isset( $_SESSION['NID'])? $_SESSION['NID']:"" ?>"
                           readonly
                         />
-                      </div>
-                      <div class="col-md-6">
-                        <label class="form-label">Voter Registration</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          value="VR987654321"
-                          readonly
-                        />
-                      </div>
+                      </div>  
                     </div>
 
                     <div class="d-flex gap-2">

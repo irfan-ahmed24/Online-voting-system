@@ -71,7 +71,7 @@ include "./../user_info.php";
                 data-bs-toggle="dropdown"
               >
                 <img
-                  src="https://via.placeholder.com/32"
+                  src="./../images/<?php echo isset($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : 'Guest.png'; ?>"
                   class="rounded-circle me-2"
                   width="32"
                   height="32"
@@ -119,7 +119,7 @@ include "./../user_info.php";
                 <div class="row align-items-center">
                   <div class="col-md-8">
                     <h2 class="mb-1">Welcome back, 
-                      <!-- <?php echo "$name" ?> -->
+                      <?php echo isset($_SESSION['user_name'])?$_SESSION['user_name']:"Guest" ?>
                     </h2>
                     <p class="mb-0 opacity-75">
                       Ready to participate in the democratic process? Check out
