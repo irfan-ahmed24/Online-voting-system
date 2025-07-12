@@ -21,6 +21,7 @@ if(isset($_POST['username']) && isset($_POST['password'])){
         $_SESSION['gender']=$user['gender'];
         $_SESSION['NID']=$user['nationalID'];
         $_SESSION['address']=$user['address'];
-}
+        $_SESSION['is_login']=true;
+ }
 }
 ?>

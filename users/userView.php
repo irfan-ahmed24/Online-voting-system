@@ -95,7 +95,7 @@ include "./../user_info.php";
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li>
-                  <a class="dropdown-item" href="../login.php">
+                  <a class="dropdown-item" href="../distroy_session.php">
                     <i class="fas fa-sign-out-alt me-2"></i>Logout
                   </a>
                 </li>
