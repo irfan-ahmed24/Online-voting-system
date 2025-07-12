@@ -76,7 +76,7 @@ include "./../user_info.php";
                   width="32"
                   height="32"
                 />
-                <!-- <?php echo "$username" ?> -->
+                <?php echo isset($_SESSION['user_name']) ?$_SESSION['user_name']:"" ?>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li>
