@@ -10,10 +10,11 @@ if(isset($_POST['username']) && isset($_POST['password'])){
 
     $sql="SELECT * FROM all_users WHERE (username='$username' OR email='$username') AND password='$password'";
     $result=mysqli_query($conn,$sql);
-    if($result){
+    if(mysqli_num_rows($result) > 0) {
         $user=mysqli_fetch_assoc($result);
 
-        $_SESSION['user_name']=$user['Name'];
+        $_SESSION['firstName']=$user['firstName'];
+        $_SESSION['lastName']=$user['lastName'];
         $_SESSION['email']=$user['email'];
         $_SESSION['phone']=$user['phone'];
         $_SESSION['profile_pic']=$user['profilePic'];
@@ -23,5 +24,9 @@ if(isset($_POST['username']) && isset($_POST['password'])){
         $_SESSION['address']=$user['address'];
         $_SESSION['is_login']=true;
  }
+ else {
+        $_SESSION['massage'] = "Invalid username or password.";
+    }
+
 }
 ?>

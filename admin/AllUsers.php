@@ -10,9 +10,6 @@
       class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
     >
       <h1 class="h2">User Management</h1>
-      <button type="button" class="btn btn-primary">
-        <i class="fas fa-user-plus me-1"></i>Add User
-      </button>
     </div>
 
     <div class="card shadow">

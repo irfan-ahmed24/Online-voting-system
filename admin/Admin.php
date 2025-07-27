@@ -292,12 +292,7 @@
                       >
                         <i class="fas fa-plus me-2"></i>Create Election
                       </button>
-                      <button
-                        class="btn btn-success"
-                        onclick="showSection('candidates')"
-                      >
-                        <i class="fas fa-user-plus me-2"></i>Add Candidate
-                      </button>
+                     
                       <button
                         class="btn btn-info"
                         onclick="showSection('users')"

@@ -45,8 +45,9 @@
               <a class="nav-link active text-light" aria-current="page" href="./Is_login.php"
                 >Login</a
               >
-            </li>
+            </li> 
           </ul>
+          <a class="btn btn-primary mx-3" href="./candidate/login.php"> Candidate login </a>
           <a class="btn btn-primary mx-3" href="./admin/admin_login.php"> Admin Penel </a>
         </div>
       </div>

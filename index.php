@@ -34,7 +34,7 @@
                     Experience the future of democratic participation with our secure, transparent, and user-friendly online voting platform.
                   </p>
                   <div class="hero-buttons animate-fade-in-delay-2">
-                    <a href="./login.php" class="btn btn-primary btn-lg me-3 mb-3">
+                    <a href="./Is_login.php" class="btn btn-primary btn-lg me-3 mb-3">
                       <i class="fas fa-sign-in-alt me-2"></i>Start Voting
                     </a>
                     <a href="./SignUp.php" class="btn btn-outline-light btn-lg mb-3">

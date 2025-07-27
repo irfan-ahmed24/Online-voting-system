@@ -22,7 +22,10 @@ include "./../user_info.php";
                     width="120"
                     height="120"
                   />
-                  <h5 class="card-title"><?php echo isset($_SESSION['user_name'])?$_SESSION['user_name']:"Guest" ?></h5>
+                  <h5 class="card-title">
+                    <?php echo isset($_SESSION['firstName'])?$_SESSION['firstName']:"Guest" ?>
+                    <?php echo isset($_SESSION['lastName'])?$_SESSION['lastName']:"" ?>
+                  </h5>
                   <p class="text-muted"><?php echo isset( $_SESSION['email'])? $_SESSION['email']:"users@.com" ?></p>
                   <span class="badge bg-success mb-3">Verified Voter</span>
                   <br />
@@ -63,11 +66,11 @@ include "./../user_info.php";
                     <div class="row mb-3">
                       <div class="col-md-6">
                         <label class="form-label">First Name</label>
-                        <input type="text" class="form-control" value="<?php echo isset($_SESSION['user_name'])?$_SESSION['user_name']:"Guest" ?>" />
+                        <input type="text" class="form-control" value="<?php echo isset($_SESSION['firstName'])?$_SESSION['firstName']:"Guest" ?>" />
                       </div>
                       <div class="col-md-6">
                         <label class="form-label">Last Name</label>
-                        <input type="text" class="form-control" value="<?php echo isset($_SESSION['user_name'])?$_SESSION['user_name']:"Guest" ?>" />
+                        <input type="text" class="form-control" value="<?php echo isset($_SESSION['lastName'])?$_SESSION['lastName']:"Guest" ?>" />
                       </div>
                     </div>
 

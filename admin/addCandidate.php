@@ -1,66 +1,3 @@
-<?php 
-session_start();
-include "config.php";
-
-if(isset($_POST['submit']) && isset($_FILES['profilePicture'])){
-  $first_name = $_POST['firstName'];
-  $last_name = $_POST['lastName'];
-  $name = "$first_name $last_name";
-  $username = $_POST['Username'];
-  $email = $_POST['email'];
-  $phone = $_POST['phone'];
-  $dateOfBirth = $_POST['dateOfBirth'];
-  $gender = $_POST['gender'];
-  $nationalId = $_POST['nationalId'];
-  $address = $_POST['address']; 
-  $password = $_POST['password'];
-  $picture = $_FILES['profilePicture']['name'];
-  $regi_date = date("Y-m-d");
-
-  // Check for existing email or username
-  $checkQuery = "SELECT * FROM all_users WHERE email='$email' OR username='$username'";
-  $checkResult = mysqli_query($conn, $checkQuery);
-  
-  if(mysqli_num_rows($checkResult) > 0){
-      echo "<script>
-        alert('Email or Username already exists. Please try again with different credentials.');
-      </script>";
-  } else {
-    // Validate file upload
-    if($_FILES['profilePicture']['error'] == 0) {
-      // Create images directory if it doesn't exist
-      if (!file_exists("images")) {
-          mkdir("images", 0777, true);
-      }
-      
-      $fileDiv = "images/" . $picture;
-      
-      // Use prepared statement for security
-      $query="INSERT INTO all_users(firstName,lastName, email, phone, dob, reg_date, gender, nationalID, address, profilePic, username, password) 
-      VALUES(' $first_name','$last_name' ,'$email', '$phone', '$dateOfBirth', '$regi_date', '$gender', '$nationalId', '$address', '$picture', '$username', '$password')";
-      
-      $result= mysqli_query($conn, $query);
-      if($result){
-          if(move_uploaded_file($_FILES['profilePicture']['tmp_name'], $fileDiv)){
-              echo "<script>
-                alert('Registration successful!');
-                window.location.href = 'login.php';
-              </script>";
-              exit();
-          } else {
-              echo "<script>alert('File upload failed.');</script>";
-          }
-      } else {
-          echo "<script>alert('Registration failed. Please try again.');</script>";
-      }
-      $stmt->close();
-      
-    } else {
-      echo "<script>alert('please fill up all required field');</script>";
-    }
-  }
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -75,14 +12,39 @@ if(isset($_POST['submit']) && isset($_FILES['profilePicture'])){
     <title>Sign Up</title>
   </head>
   <body>
-    <nav class="fixed-top">
-      <?php
-    include "./navbar.php";
-    ?>
+    <nav class="fixed-top navbar navbar-expand-lg bg-secondary bg-gradient">
+      <div class="container-fluid">
+        <a class="navbar-brand mx-3 text-light" href="#"
+          >Online Voting System</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item mx-3">
+              <a
+                class="nav-link active text-light"
+                aria-current="page"
+                href="./Admin.php"
+                >Dashboard</a
+              >
+            </li>
+          </ul>
+          <a class="btn btn-primary mx-3" href="./Admin.php"> Admin Penel </a>
+           <a class="btn btn-success mx-3" href="./../index.php"> Sign Out </a>
+        </div>
+      </div>
+      
     </nav>
-
-
-    
     <!-- Sign Up Form Section -->
     <div
       class="container-fluid d-flex align-items-center justify-content-center bg-info bg-gradient mt-5"
@@ -96,8 +58,7 @@ if(isset($_POST['submit']) && isset($_FILES['profilePicture'])){
                 <div class="mb-3">
                   <i class="fas fa-user-plus fa-3x text-primary"></i>
                 </div>
-                <h2 class="fw-bold text-dark mb-2">Create Account</h2>
-                <p class="text-muted">Join our secure voting platform</p>
+                <h2 class="fw-bold text-dark mb-2">Add Candidate</h2>
               </div>
 
               <!-- Sign Up Form -->
@@ -337,25 +298,42 @@ if(isset($_POST['submit']) && isset($_FILES['profilePicture'])){
 
                   <div class="col-md-6 mb-3">
                     <label for="firstName" class="form-label fw-semibold"
-                      >Username</label
+                      >Group Name</label
                     >
                     <div class="input-group">
                       <span class="input-group-text bg-light border-end-0">
-                        <i class="fas fa-user text-muted"></i>
+                        <i class="fas fa-venus-mars text-muted"></i>
                       </span>
-                      <input
-                        type="text"
-                        class="form-control border-start-0 ps-0"
-                        id="Username"
-                        name="Username"
-                        placeholder="Username"
+                      <select
+                        class="form-control border-start-0 ps-2"
+                        id="gender"
+                        name="gender"
                         required
-                      />
+                      >
+                        <option value="">Select Group</option>
+                        <option value="Democratic Party">Democratic Party</option>
+                        <option value="Republican Party">Republican Party</option>
+                        <option value="Green Party">Green Party</option>
+                        <option value="other">other</option>
+                      </select>
                       <div class="invalid-feedback">
-                        Please provide a valid Username.
+                        Please select your gender.
                       </div>
                     </div>
                   </div>
+
+                  <div class="col-md-12 mb-3">
+                    <label for="address" class="form-label fw-semibold"
+                      >Say something to Voters</label
+                    >
+                    <div class="input-group">
+                      <textarea name="comment" id="comment" class="form-control border-start-0 ps-0"></textarea>
+                      <div class="invalid-feedback">
+                        Please provide a valid address.
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
 
                 <div class="row">

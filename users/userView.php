@@ -76,7 +76,8 @@ include "./../user_info.php";
                   width="32"
                   height="32"
                 />
-                <?php echo isset($_SESSION['user_name']) ?$_SESSION['user_name']:"" ?>
+                <?php echo isset($_SESSION['firstName']) ?$_SESSION['firstName']:"" ?>
+                <?php echo isset($_SESSION['lastName']) ?$_SESSION['lastName']:"" ?>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li>
@@ -119,7 +120,7 @@ include "./../user_info.php";
                 <div class="row align-items-center">
                   <div class="col-md-8">
                     <h2 class="mb-1">Welcome back, 
-                      <?php echo isset($_SESSION['user_name'])?$_SESSION['user_name']:"Guest" ?>
+                      <?php echo isset($_SESSION['firstName'])?$_SESSION['firstName']:"Guest" ?>
                     </h2>
                     <p class="mb-0 opacity-75">
                       Ready to participate in the democratic process? Check out
