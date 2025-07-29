@@ -1,5 +1,5 @@
-<?
-include './candidateInfo.php';
+<?php 
+include 'candidateInfo.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +28,7 @@ include './candidateInfo.php';
             </a>
             <div class="navbar-nav ms-auto">
                 <span class="nav-link text-muted me-3">
-                    <i class="fas fa-user me-1"></i>Welcome, <?php echo $_SESSION['firstName']?>
+                    <i class="fas fa-user me-1"></i>Welcome,
                 </span>
                 <img src="./../images/<?php?>" 
                     class="rounded-circle me-2"

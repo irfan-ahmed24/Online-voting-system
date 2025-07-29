@@ -47,7 +47,7 @@
               >
             </li> 
           </ul>
-          <a class="btn btn-primary mx-3" href="./candidate/is_login.php"> Candidate login </a>
+          <a class="btn btn-primary mx-3" href="./candidate/login.php"> Candidate login </a>
           <a class="btn btn-primary mx-3" href="./admin/admin_login.php"> Admin Penel </a>
         </div>
       </div>
