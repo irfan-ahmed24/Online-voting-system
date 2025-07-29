@@ -27,6 +27,5 @@ if(isset($_POST['username']) && isset($_POST['password'])){
  else {
         $_SESSION['massage'] = "Invalid username or password.";
     }
-
 }
 ?>

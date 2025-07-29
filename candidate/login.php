@@ -1,3 +1,24 @@
+<?php
+include 'candidateInfo.php';
+include './../config.php';
+$_SESSION['massage'] = "";
+
+if(isset($_POST['username']) && isset($_POST['password'])){
+    $password = $_POST['password'];
+    $username = $_POST['username'];
+
+    $sql = "SELECT * FROM candidate WHERE (username='$username' OR email='$username') AND password='$password'";
+    $result = mysqli_query($conn, $sql);
+    
+    if(mysqli_num_rows($result) > 0) {
+        $user=mysqli_fetch_assoc($result);
+        header("Location: profile.php");
+        exit();
+    } else {
+       $_SESSION['massage'] = "Invalid username or password.";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,7 +75,7 @@
                                 <?php endif; ?>
                             </div>
 
-                            <form id="adminLoginForm" method="POST" action="./is_login.php">
+                            <form id="adminLoginForm" method="POST" action="">
                                 <!-- Username Field -->
                                 <div class="form-floating mb-4">
                                     <input 

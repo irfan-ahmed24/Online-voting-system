@@ -1,3 +1,6 @@
+<?
+include './candidateInfo.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,9 +28,13 @@
             </a>
             <div class="navbar-nav ms-auto">
                 <span class="nav-link text-muted me-3">
-                    <i class="fas fa-user me-1"></i>Welcome, John Doe
+                    <i class="fas fa-user me-1"></i>Welcome, <?php echo $_SESSION['firstName']?>
                 </span>
-                <a class="nav-link" href="logout.php">
+                <img src="./../images/<?php?>" 
+                    class="rounded-circle me-2"
+                    width="32"
+                    height="32">
+                <a class="nav-link" href="can_session_distroy.php">
                     <i class="fas fa-sign-out-alt me-1"></i>Logout
                 </a>
             </div>
