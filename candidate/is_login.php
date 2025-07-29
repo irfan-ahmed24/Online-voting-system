@@ -1,3 +1,4 @@
 <?php
-header("location: ./profile.php");
+header('Location: profile.php');
+exit();
 ?>

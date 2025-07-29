@@ -64,11 +64,12 @@
               <!-- Sign Up Form -->
               <form
                 method="POST"
-                action="SignUp.php"
+                action="candidateSignUp.php"
                 id="signUpForm"
                 enctype="multipart/form-data"
                 novalidate
               >
+<!-- first name section -->
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="firstName" class="form-label fw-semibold"
@@ -84,6 +85,7 @@
                         id="firstName"
                         name="firstName"
                         placeholder="Enter first name"
+                        value="<?php echo isset($_POST['firstName']) ? htmlspecialchars($_POST['firstName']) : ''; ?>"
                         required
                       />
                       <div class="invalid-feedback">
@@ -91,7 +93,7 @@
                       </div>
                     </div>
                   </div>
-
+<!-- last name section -->
                   <div class="col-md-6 mb-3">
                     <label for="lastName" class="form-label fw-semibold"
                       >Last Name</label
@@ -106,6 +108,7 @@
                         id="lastName"
                         name="lastName"
                         placeholder="Enter last name"
+                        value="<?php echo isset($_POST['lastName']) ? htmlspecialchars($_POST['lastName']) : ''; ?>"
                         required
                       />
                       <div class="invalid-feedback">
@@ -114,7 +117,7 @@
                     </div>
                   </div>
                 </div>
-
+<!-- emain section -->
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="email" class="form-label fw-semibold"
@@ -130,6 +133,7 @@
                         id="email"
                         name="email"
                         placeholder="Enter your email"
+                        value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
                         required
                       />
                       <div class="invalid-feedback">
@@ -137,7 +141,7 @@
                       </div>
                     </div>
                   </div>
-
+<!-- phone section -->
                   <div class="col-md-6 mb-3">
                     <label for="phone" class="form-label fw-semibold"
                       >Phone Number</label
@@ -152,6 +156,7 @@
                         id="phone"
                         name="phone"
                         placeholder="Enter phone number"
+                        value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>"
                         required
                       />
                       <div class="invalid-feedback">
@@ -160,7 +165,7 @@
                     </div>
                   </div>
                 </div>
-
+<!-- date of birth section -->
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="dateOfBirth" class="form-label fw-semibold"
@@ -175,6 +180,7 @@
                         class="form-control border-start-0 ps-0"
                         id="dateOfBirth"
                         name="dateOfBirth"
+                        value="<?php echo isset($_POST['dateOfBirth']) ? htmlspecialchars($_POST['dateOfBirth']) : ''; ?>"
                         required
                       />
                       <div class="invalid-feedback">
@@ -182,7 +188,7 @@
                       </div>
                     </div>
                   </div>
-
+<!-- gender section -->
                   <div class="col-md-6 mb-3">
                     <label for="gender" class="form-label fw-semibold"
                       >Gender</label
@@ -198,10 +204,10 @@
                         required
                       >
                         <option value="">Select gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                        <option value="prefer-not-to-say">
+                        <option value="male" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'male') ? 'selected' : ''; ?>>Male</option>
+                        <option value="female" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'female') ? 'selected' : ''; ?>>Female</option>
+                        <option value="other" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'other') ? 'selected' : ''; ?>>Other</option>
+                        <option value="prefer-not-to-say" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'prefer-not-to-say') ? 'selected' : ''; ?>>
                           Prefer not to say
                         </option>
                       </select>
@@ -211,7 +217,7 @@
                     </div>
                   </div>
                 </div>
-
+<!-- national id section -->
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="nationalId" class="form-label fw-semibold"
@@ -227,6 +233,7 @@
                         id="nationalId"
                         name="nationalId"
                         placeholder="Enter national ID"
+                        value="<?php echo isset($_POST['nationalId']) ? htmlspecialchars($_POST['nationalId']) : ''; ?>"
                         required
                       />
                       <div class="invalid-feedback">
@@ -234,7 +241,7 @@
                       </div>
                     </div>
                   </div>
-
+<!-- address section -->
                   <div class="col-md-6 mb-3">
                     <label for="address" class="form-label fw-semibold"
                       >Address</label
@@ -249,6 +256,7 @@
                         id="address"
                         name="address"
                         placeholder="Enter your address"
+                        value="<?php echo isset($_POST['address']) ? htmlspecialchars($_POST['address']) : ''; ?>"
                         required
                       />
                       <div class="invalid-feedback">
@@ -257,7 +265,7 @@
                     </div>
                   </div>
                 </div>
-
+<!-- profile pic section -->
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="profilePicture" class="form-label fw-semibold"
@@ -295,47 +303,81 @@
                       />
                     </div>
                   </div>
-
+<!-- politicalParty section -->
                   <div class="col-md-6 mb-3">
-                    <label for="firstName" class="form-label fw-semibold"
-                      >Group Name</label
+                    <label for="politicalParty" class="form-label fw-semibold"
+                      >Political Party</label
                     >
                     <div class="input-group">
                       <span class="input-group-text bg-light border-end-0">
-                        <i class="fas fa-venus-mars text-muted"></i>
+                        <i class="fas fa-flag text-muted"></i>
                       </span>
                       <select
                         class="form-control border-start-0 ps-2"
-                        id="gender"
-                        name="gender"
+                        id="politicalParty"
+                        name="politicalParty"
                         required
                       >
-                        <option value="">Select Group</option>
-                        <option value="Democratic Party">Democratic Party</option>
-                        <option value="Republican Party">Republican Party</option>
-                        <option value="Green Party">Green Party</option>
-                        <option value="other">other</option>
+                        <option value="">Select Political Party</option>
+                        <option value="Democratic Party" <?php echo (isset($_POST['politicalParty']) && $_POST['politicalParty'] == 'Democratic Party') ? 'selected' : ''; ?>>Democratic Party</option>
+                        <option value="Republican Party" <?php echo (isset($_POST['politicalParty']) && $_POST['politicalParty'] == 'Republican Party') ? 'selected' : ''; ?>>Republican Party</option>
+                        <option value="Green Party" <?php echo (isset($_POST['politicalParty']) && $_POST['politicalParty'] == 'Green Party') ? 'selected' : ''; ?>>Green Party</option>
+                        <option value="Independent" <?php echo (isset($_POST['politicalParty']) && $_POST['politicalParty'] == 'Independent') ? 'selected' : ''; ?>>Independent</option>
+                        <option value="Other" <?php echo (isset($_POST['politicalParty']) && $_POST['politicalParty'] == 'Other') ? 'selected' : ''; ?>>Other</option>
                       </select>
                       <div class="invalid-feedback">
-                        Please select your gender.
+                        Please select a political party.
                       </div>
                     </div>
                   </div>
-
+<!-- Campaign Message section -->
                   <div class="col-md-12 mb-3">
-                    <label for="address" class="form-label fw-semibold"
-                      >Say something to Voters</label
+                    <label for="campaignMessage" class="form-label fw-semibold"
+                      >Campaign Message</label
                     >
                     <div class="input-group">
-                      <textarea name="comment" id="comment" class="form-control border-start-0 ps-0"></textarea>
+                      <span class="input-group-text bg-light border-end-0">
+                        <i class="fas fa-bullhorn text-muted"></i>
+                      </span>
+                      <textarea 
+                        name="campaignMessage" 
+                        id="campaignMessage" 
+                        class="form-control border-start-0 rounded ps-2" 
+                        rows="4"
+                        placeholder="Tell voters about your vision and goals..."
+                        required
+                      ><?php echo isset($_POST['campaignMessage']) ? htmlspecialchars($_POST['campaignMessage']) : ''; ?></textarea>
                       <div class="invalid-feedback">
-                        Please provide a valid address.
+                        Please provide a campaign message.
                       </div>
                     </div>
                   </div>
-
                 </div>
 
+<!-- username section -->
+                <div class="col-md-6 mb-3">
+                    <label for="username" class="form-label fw-semibold"
+                      >username</label
+                    >
+                    <div class="input-group">
+                      <span class="input-group-text bg-light border-end-0">
+                        <i class="fas fa-user text-muted"></i>
+                      </span>
+                      <input
+                        type="text"
+                        class="form-control border-start-0 rounded ps-0"
+                        id="username"
+                        name="username"
+                        placeholder="Enter username"
+                        value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>"
+                        required
+                      />
+                      <div class="invalid-feedback">
+                        Please provide a valid username.
+                      </div>
+                    </div>
+                  </div>
+<!-- password section -->
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="password" class="form-label fw-semibold"
@@ -347,7 +389,7 @@
                       </span>
                       <input
                         type="password"
-                        class="form-control border-start-0 ps-0"
+                        class="form-control border-start-0 rounded ps-0"
                         id="password"
                         name="password"
                         placeholder="Create a password"
@@ -391,7 +433,7 @@
                       </span>
                       <input
                         type="password"
-                        class="form-control border-start-0 ps-0"
+                        class="form-control border-start-0 rounded ps-0"
                         id="confirmPassword"
                         name="confirmPassword"
                         placeholder="Confirm your password"
@@ -427,22 +469,6 @@
                       You must agree to the terms and conditions.
                     </div>
                   </div>
-
-                  <div class="form-check mt-2">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="ageConfirm"
-                      name="ageConfirm"
-                      required
-                    />
-                    <label class="form-check-label text-sm" for="ageConfirm">
-                      I confirm that I am 18 years or older and eligible to vote
-                    </label>
-                    <div class="invalid-feedback">
-                      You must be 18 or older to register.
-                    </div>
-                  </div>
                 </div>
 
                 <div class="d-grid mb-3">
@@ -451,19 +477,8 @@
                     name="submit"
                     class="btn btn-primary btn-lg rounded-3 fw-semibold"
                   >
-                    <i class="fas fa-user-plus me-2"></i>Create Account
+                    <i class="fas fa-user-plus me-2"></i>Add Candidate
                   </button>
-                </div>
-
-                <div class="text-center">
-                  <p class="text-muted mb-0">
-                    Already have an account?
-                    <a
-                      href="./login.php"
-                      class="text-decoration-none text-primary fw-semibold"
-                      >Sign In</a
-                    >
-                  </p>
                 </div>
               </form>
             </div>
