@@ -1,12 +1,18 @@
 <?php 
 include 'candidateInfo.php';
+
+// Check if candidate is logged in
+if (!isset($_SESSION['is_login']) || $_SESSION['is_login'] !== true || !isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'candidate') {
+    header("Location: login.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Candidate Profile - John Doe</title>
+    <title>Candidate Profile - <?php echo isset($_SESSION['firstName']) && isset($_SESSION['lastName']) ? htmlspecialchars($_SESSION['firstName'] . ' ' . $_SESSION['lastName']) : 'Candidate Dashboard'; ?></title>
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
         rel="stylesheet"
@@ -28,9 +34,9 @@ include 'candidateInfo.php';
             </a>
             <div class="navbar-nav ms-auto">
                 <span class="nav-link text-muted me-3">
-                    <i class="fas fa-user me-1"></i>Welcome,
+                    <i class="fas fa-user me-1"></i>Welcome,<?php echo $_SESSION['firstName'] ?>
                 </span>
-                <img src="./../images/<?php?>" 
+                <img src="./../admin/candidateImage/<?php echo isset($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : 'Guest.png'; ?>" 
                     class="rounded-circle me-2"
                     width="32"
                     height="32">
@@ -49,7 +55,7 @@ include 'candidateInfo.php';
                     <div class="col-md-3 text-center">
                         <div class="profile-image-container">
                             <img
-                                src="https://via.placeholder.com/120"
+                                src="./../admin/candidateImage/<?php echo isset($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : 'Guest.png'; ?>"
                                 class="rounded-circle mb-2 profile-image"
                                 width="120"
                                 height="120"
@@ -57,14 +63,16 @@ include 'candidateInfo.php';
                             />
                             <div class="status-indicator online"></div>
                         </div>
-                        <h5 class="mb-1 candidate-name">John Doe</h5>
-                        <span class="badge bg-gradient-primary party-badge">Democratic Party</span>
-                        <div class="mt-2">
+                        <h5 class="mb-1 candidate-name">
+                            <?php echo isset($_SESSION['firstName'])?$_SESSION['firstName']:"Guest" ?>
+                            <?php echo isset($_SESSION['lastName'])?$_SESSION['lastName']:"" ?></h5>
+                        <span class="badge bg-gradient-primary party-badge"><?php echo $_SESSION['politicalParty'] ?></span>
+                        <!-- <div class="mt-2">
                             <small class="text-muted">
                                 <i class="fas fa-calendar me-1"></i>
                                 Member since Jan 2020
                             </small>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="col-md-9">
                         <div class="d-flex justify-content-between align-items-start mb-3">
@@ -79,34 +87,34 @@ include 'candidateInfo.php';
                                 <div class="info-item">
                                     <i class="fas fa-envelope text-primary me-2"></i>
                                     <strong>Email:</strong> 
-                                    <span class="text-muted">john.doe@example.com</span>
+                                    <span class="text-muted"><?php echo isset($_SESSION['email'])?$_SESSION['email']:"" ?></span>
                                 </div>
                                 <div class="info-item">
                                     <i class="fas fa-phone text-success me-2"></i>
                                     <strong>Phone:</strong> 
-                                    <span class="text-muted">+1 (555) 123-4567</span>
+                                    <span class="text-muted"><?php echo isset($_SESSION['phone'])?$_SESSION['phone']:"" ?></span>
                                 </div>
                                 <div class="info-item">
                                     <i class="fas fa-map-marker-alt text-danger me-2"></i>
                                     <strong>Address:</strong> 
-                                    <span class="text-muted">123 Main Street, City, State</span>
+                                    <span class="text-muted"><?php echo isset($_SESSION['address'])?$_SESSION['address']:"" ?></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="info-item">
                                     <i class="fas fa-birthday-cake text-warning me-2"></i>
                                     <strong>Date of Birth:</strong> 
-                                    <span class="text-muted">May 15, 1980</span>
+                                    <span class="text-muted"><?php echo isset($_SESSION['dateOfBirth'])?$_SESSION['dateOfBirth']:"" ?></span>
                                 </div>
-                                <div class="info-item">
+                                <!-- <div class="info-item">
                                     <i class="fas fa-id-badge text-info me-2"></i>
                                     <strong>Candidate ID:</strong> 
-                                    <span class="badge bg-light text-dark">#000001</span>
-                                </div>
+                                    <span class="badge bg-light text-dark"><?php echo isset($_SESSION['candidateId'])?$_SESSION['candidateId']:"" ?></span>
+                                </div> -->
                                 <div class="info-item">
                                     <i class="fas fa-flag text-purple me-2"></i>
                                     <strong>Political Party:</strong> 
-                                    <span class="text-muted">Democratic Party</span>
+                                    <span class="text-muted"><?php echo $_SESSION['politicalParty'] ?></span>
                                 </div>
                             </div>
                         </div>

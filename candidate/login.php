@@ -1,6 +1,21 @@
 <?php 
-include 'candidateLogin.php';
 include 'candidateInfo.php';
+
+// Check if candidate is already logged in
+if (isset($_SESSION['is_login']) && $_SESSION['is_login'] === true && isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'candidate') {
+    header("Location: profile.php");
+    exit();
+}
+
+// Handle login form submission
+if ($_POST && isset($_POST['username']) && isset($_POST['password'])) {
+    // candidateInfo.php handles the authentication
+    // Check if login was successful
+    if (isset($_SESSION['is_login']) && $_SESSION['is_login'] === true) {
+        header("Location: profile.php");
+        exit();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,13 +67,14 @@ include 'candidateInfo.php';
                             <div id="alertContainer">
                                 <?php if (isset($_SESSION['message'])): ?>
                                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                        <strong>Error!</strong> <?php echo $_SESSION['message'] ?>
+                                        <strong>Error!</strong> <?php echo htmlspecialchars($_SESSION['message']); ?>
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
+                                    <?php unset($_SESSION['message']); // Clear the message after displaying ?>
                                 <?php endif; ?>
                             </div>
 
-                            <form id="adminLoginForm" method="POST" action="candidateLogin.php">
+                            <form id="adminLoginForm" method="POST" action="">
                                 <!-- Username Field -->
                                 <div class="form-floating mb-4">
                                     <input 
