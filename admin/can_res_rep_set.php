@@ -26,6 +26,7 @@ include './fatchCandidate.php';
             <th>SI</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Age</th>
             <th>Group Name</th>
             <th>Actions</th>
           </tr>
@@ -39,6 +40,7 @@ include './fatchCandidate.php';
               <?php echo htmlspecialchars($candidate['lastName']); ?>
               </td>
               <td><?php echo htmlspecialchars($candidate['email']); ?></td>
+              <td>calculating...</td>
               <td><?php echo htmlspecialchars($candidate['groupName']); ?></td>
               <td>
               <a href="editCandidate.php?id=<?php echo $candidate['ID']; ?>" class="btn btn-sm btn-warning">Edit</a>
