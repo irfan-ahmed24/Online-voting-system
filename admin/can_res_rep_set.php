@@ -41,7 +41,7 @@ include './fatchCandidate.php';
               <td><?php echo htmlspecialchars($candidate['email']); ?></td>
               <td><?php echo htmlspecialchars($candidate['groupName']); ?></td>
               <td>
-              <a href="editCandidate.php?id=" class="btn btn-sm btn-warning">Edit</a>
+              <a href="editCandidate.php?id=<?php echo $candidate['ID']; ?>" class="btn btn-sm btn-warning">Edit</a>
               <a href="deleteCandidate.php?id=<?php echo $candidate['ID']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this candidate?');">Delete</a>
               </td>
             </tr>
