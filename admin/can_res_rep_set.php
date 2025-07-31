@@ -1,3 +1,6 @@
+<?php 
+include './fatchCandidate.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -17,8 +20,35 @@
         </a>
       </div>
       <div class="alert alert-info">
-        <i class="fas fa-info-circle me-2"></i>
-        Candidate management features will be implemented here.
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>SI</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Group Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            <?php $i = 0; foreach ($candidates as $candidate): ?>
+            <tr>
+              <td><?php echo ++$i; ?></td>
+              <td>
+              <?php echo htmlspecialchars($candidate['firstName']); ?>
+              <?php echo htmlspecialchars($candidate['lastName']); ?>
+              </td>
+              <td><?php echo htmlspecialchars($candidate['email']); ?></td>
+              <td><?php echo htmlspecialchars($candidate['groupName']); ?></td>
+              <td>
+              <a href="editCandidate.php?id=" class="btn btn-sm btn-warning">Edit</a>
+              <a href="deleteCandidate.php?id=<?php echo $candidate['ID']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this candidate?');">Delete</a>
+              </td>
+            </tr>
+            
+          <?php endforeach; ?>
+        </tbody>
+      </table>
       </div>
     </div>
 
