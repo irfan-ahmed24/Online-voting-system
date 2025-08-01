@@ -1,5 +1,6 @@
 <?php 
 include './fatchCandidate.php';
+include './fatchElection.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,8 +64,71 @@ include './fatchCandidate.php';
         <h1 class="h2">Election Results</h1>
       </div>
       <div class="alert alert-info">
-        <i class="fas fa-chart-bar me-2"></i>
-        Election results and analytics will be displayed here.
+        <?php $i = 0; foreach ($elections as $election): ?>
+       <!-- all election result start here -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary">
+                <h5 class="mb-0 ">
+                    <?php echo htmlspecialchars($election['election_name']); ?>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 br-1">
+                        <h6>Vote Share Comparison</h6>
+                        <!-- candidate vote share comparison will be displayed here. -->
+                         <?php $i = 0; foreach ($candidates as $candidate): ?>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>
+                                  <?php echo htmlspecialchars($candidate['firstName']); ?>
+                                  <?php echo htmlspecialchars($candidate['lastName']); ?>
+                              </span>
+                                <span class="text-primary fw-bold">42.5%</span>
+                            </div>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-primary" style="width: 42.5%"></div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Election Timeline</h6>
+                        <div class="timeline">
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-play-circle text-success fa-lg"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Election Started</h6>
+                                    <p class="text-muted mb-0"><?php echo htmlspecialchars($election['starting_date']); ?></p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-circle text-primary fa-lg"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1"><?php echo htmlspecialchars($election['status']); ?></h6>
+                                    <p class="text-muted mb-0">Voting in Progress</p>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-stop-circle text-danger fa-lg"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Election Ends</h6>
+                                    <p class="text-muted mb-0"><?php echo htmlspecialchars($election['ending_date']); ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
+        <!-- all result election end here -->
       </div>
     </div>
 

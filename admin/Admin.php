@@ -33,7 +33,7 @@ if ($result) {
     <title>Admin</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg bg-secondary bg-gradient">
+    <nav class="navbar navbar-expand-lg bg-secondary bg-gradient fixed-top">
       <div class="container-fluid">
         <a class="navbar-brand mx-3 text-light" href="#"
           >Online Voting System</a
@@ -67,7 +67,7 @@ if ($result) {
     </nav>
 
     <!-- Admin Dashboard Content -->
-    <div class="container-fluid">
+    <div class="container-fluid mt-5 pt-3">
       <div class="row">
         <!-- Sidebar -->
         <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
@@ -297,9 +297,7 @@ if ($result) {
                             <td>
                               <?php echo htmlspecialchars($candidate['groupName']); ?>
                             </td>
-                            <td>calculating...</td>
-                            
-                           
+                            <td>calculating...</td> 
                           </tr>
 
                           <?php endforeach; ?>
@@ -334,6 +332,12 @@ if ($result) {
                       </button>
                       <button
                         class="btn btn-warning"
+                        onclick="showSection('results')"
+                      >
+                        <i class="fas fa-chart-line me-2"></i>View Results
+                      </button>
+                      <button
+                        class="btn btn-danger"
                         onclick="showSection('reports')"
                       >
                         <i class="fas fa-chart-line me-2"></i>View Reports
