@@ -1,3 +1,24 @@
+<?php 
+include './../config.php';
+//fatch total elections
+$sql1 = "SELECT * FROM elections WHERE status = 'active'";
+$result1 = mysqli_query($conn, $sql1);
+$totalElections = mysqli_num_rows($result1);
+//fatch total Users
+$sql2 = "SELECT * FROM all_users";
+$result2 = mysqli_query($conn, $sql2);
+$totalUsers = mysqli_num_rows($result2);
+// Fetch total candidates
+$sql = "SELECT * FROM candidate";
+$result = mysqli_query($conn, $sql);
+$totalCandidates = mysqli_num_rows($result);
+$candidates = [];
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $candidates[] = $row;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -40,7 +61,7 @@
             </li>
           </ul>
           <a class="btn btn-primary mx-3" href="./Admin.php"> Admin Penel </a>
-           <a class="btn btn-success mx-3" href="./../index.php"> Sign Out </a>
+          <a class="btn btn-success mx-3" href="./../index.php"> Sign Out </a>
         </div>
       </div>
     </nav>
@@ -159,7 +180,7 @@
                           Total Users
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          0
+                          <?php echo $totalUsers; ?>
                         </div>
                       </div>
                       <div class="col-auto">
@@ -183,7 +204,7 @@
                           Active Elections
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          0
+                          <?php echo $totalElections; ?>
                         </div>
                       </div>
                       <div class="col-auto">
@@ -231,7 +252,7 @@
                           Candidates
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          0
+                          <?php echo $totalCandidates; ?>
                         </div>
                       </div>
                       <div class="col-auto">
@@ -257,19 +278,31 @@
                   <div class="card-body">
                     <div class="table-responsive">
                       <table class="table table-striped table-hover">
-                        <thead class="table-dark">
+                        <thead>
                           <tr>
                             <th>Position</th>
-                            <th>Candidate</th>
-                            <th>Vote find</th>
+                            <th>Name</th>
+                            <th>Political Party</th>
+                            <th>Find Votes</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <!-- Example row -->
+                          <?php $i = 0; foreach ($candidates as $candidate): ?>
                           <tr>
+                            <td><?php echo ++$i; ?></td>
+                            <td>
+                              <?php echo htmlspecialchars($candidate['firstName']); ?>
+                              <?php echo htmlspecialchars($candidate['lastName']); ?>
+                            </td>
+                            <td>
+                              <?php echo htmlspecialchars($candidate['groupName']); ?>
+                            </td>
+                            <td>calculating...</td>
+                            
                            
                           </tr>
-                          <!-- More rows would be populated from database -->
+
+                          <?php endforeach; ?>
                         </tbody>
                       </table>
                     </div>
@@ -292,7 +325,7 @@
                       >
                         <i class="fas fa-plus me-2"></i>Create Election
                       </button>
-                     
+
                       <button
                         class="btn btn-info"
                         onclick="showSection('users')"
@@ -343,7 +376,7 @@
       body {
         font-size: 0.875rem;
       }
-      .navbar{
+      .navbar {
         z-index: 1030;
       }
 
