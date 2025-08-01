@@ -1,5 +1,6 @@
 <?php
 include "./../user_info.php";
+include "./../admin/fatchElection.php";
 ?>
 
 <!DOCTYPE html>
@@ -142,7 +143,7 @@ include "./../user_info.php";
               <div class="card stat-card text-center h-100">
                 <div class="card-body">
                   <i class="fas fa-clock fa-2x text-warning mb-2"></i>
-                  <h4 class="card-title text-warning">0</h4>
+                  <h4 class="card-title text-warning"><?php echo $totalElections ?></h4>
                   <p class="card-text text-muted">Active Elections</p>
                 </div>
               </div>
