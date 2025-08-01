@@ -6,6 +6,16 @@ if (!isset($_SESSION['is_login']) || $_SESSION['is_login'] !== true || !isset($_
     header("Location: login.php");
     exit();
 }
+
+include './../admin/fatchElection.php';
+$sql2 = "SELECT * FROM elections WHERE status='active'";
+$result2 = mysqli_query($conn, $sql2);
+$activeElections = [];
+if (mysqli_num_rows($result2) > 0) {
+    while ($row = mysqli_fetch_assoc($result2)) {
+        $activeElections[] = $row;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -131,22 +141,26 @@ if (!isset($_SESSION['is_login']) || $_SESSION['is_login'] !== true || !isset($_
                 </h5>
             </div>
             <div class="card-body">
+                <?php foreach($activeElections as $activeelection): ?>
                 <div class="row">
                     <div class="col-md-8">
-                        <h4 class="text-success">Presidential Election 2025</h4>
+                        <h4 class="text-success"><?php echo htmlspecialchars($activeelection['election_name']) ?></h4>
                         <p class="text-muted mb-2">
                             <i class="fas fa-calendar me-1"></i>
-                            Election Period: July 1, 2025 - July 31, 2025
+                            Election Period: 
+                            <?php echo htmlspecialchars($activeelection['starting_date']) ?>
+                             - 
+                            <?php echo htmlspecialchars($activeelection['ending_date']) ?>
                         </p>
                         <p class="text-muted mb-3">
                             <i class="fas fa-map-marker-alt me-1"></i>
-                            Position: President | Constituency: National
+                            Position:<?php echo htmlspecialchars($activeelection['position']) ?>
                         </p>
                         
                         <!-- Campaign Message -->
                         <div class="alert alert-light border">
                             <h6><i class="fas fa-bullhorn me-1"></i>Campaign Message:</h6>
-                            <p class="mb-0">Experienced leader committed to bringing positive change and representing the voice of the people in government. Together, we can build a stronger future for our community and nation.</p>
+                            <p class="mb-0"><?php echo $_SESSION['campaignMessage'] ?></p>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -159,12 +173,14 @@ if (!isset($_SESSION['is_login']) || $_SESSION['is_login'] !== true || !isset($_
                         </div>
                     </div>
                 </div>
+                <hr />
+                <?php endforeach; ?>
             </div>
         </div>
 
         <!-- Voting Statistics -->
         <div class="row mb-4">
-            <div class="col-md-3 mb-3">
+            <div class="col-md-4 mb-3">
                 <div class="card text-center stats-card bg-primary text-white h-100">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="stats-icon">
@@ -178,7 +194,7 @@ if (!isset($_SESSION['is_login']) || $_SESSION['is_login'] !== true || !isset($_
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-md-4 mb-3">
                 <div class="card text-center stats-card bg-success text-white h-100">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="stats-icon">
@@ -192,7 +208,7 @@ if (!isset($_SESSION['is_login']) || $_SESSION['is_login'] !== true || !isset($_
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-md-4 mb-3">
                 <div class="card text-center stats-card bg-info text-white h-100">
                     <div class="card-body d-flex flex-column justify-content-center">
                         <div class="stats-icon">
@@ -202,21 +218,6 @@ if (!isset($_SESSION['is_login']) || $_SESSION['is_login'] !== true || !isset($_
                         <small class="opacity-75">Current Position</small>
                         <div class="mt-2">
                             <span class="badge bg-white text-info">Leading</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card text-center stats-card bg-warning text-dark h-100">
-                    <div class="card-body d-flex flex-column justify-content-center">
-                        <div class="stats-icon">
-                            <i class="fas fa-chart-line fa-2x mb-3"></i>
-                        </div>
-                        <h3 class="mb-1 counter" data-target="127">0</h3>
-                        <small class="opacity-75">Votes Today</small>
-                        <div class="mt-2">
-                            <i class="fas fa-arrow-up text-success me-1"></i>
-                            <small>+15% from yesterday</small>
                         </div>
                     </div>
                 </div>
