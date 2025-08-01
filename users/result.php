@@ -1,3 +1,7 @@
+<?php
+include "./../admin/fatchElection.php";
+include "./../admin/fatchCandidate.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,20 +12,16 @@
 <body>
     <div class="container mt-4">
           <h2 class="mb-4">Election Results</h2>
-
+          <?php foreach ($elections as $election): ?>
           <div class="card mb-4">
             <div class="card-header">
-              <h5 class="mb-0">Presidential Election 2024 - Live Results</h5>
+              <h5 class="mb-0"><?php echo htmlspecialchars($election['election_name']) ?></h5>
             </div>
             <div class="card-body">
               <div class="row">
                 <div class="col-lg-8">
 
-
-                <?php 
-                $val=0;
-                ?>
-
+                <?php foreach($candidates as $candidate): ?>
 
                   <div class="candidate-result mb-3">
                     <div class="d-flex align-items-center mb-2">
@@ -32,8 +32,11 @@
                         height="40"
                       />
                       <div class="flex-grow-1">
-                        <h6 class="mb-0">Alice Johnson</h6>
-                        <small class="text-muted">Democratic Party</small>
+                        <h6 class="mb-0">
+                          <?php echo htmlspecialchars($candidate['firstName']) ?>
+                          <?php echo htmlspecialchars($candidate['lastName']) ?>
+                        </h6>
+                        <small class="text-muted"><?php echo htmlspecialchars($candidate['groupName']) ?></small>
                       </div>
                       <div class="text-end">
                         <strong class="text-success"><?php $val?> votes</strong>
@@ -48,11 +51,7 @@
                       ></div>
                     </div>
                   </div>
-
-
-
-
-
+                  <?php endforeach; ?>
                 </div>
 
 
@@ -75,6 +74,7 @@
               </div>
             </div>
           </div>
+          <?php endforeach; ?>
         </div>
 </body>
 </html>
