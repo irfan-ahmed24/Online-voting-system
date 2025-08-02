@@ -50,8 +50,19 @@ if (isset($_POST['submit'])) {
             $error_message = "Error creating election: " . mysqli_error($conn);
             $displayError = "d-block";
         } else {
+            if (!empty( $_SESSION['selected_candidates_id'])) {
+                foreach ( $_SESSION['selected_candidates_id'] as $selected_candidate_id) {
+                  $sql="INSERT INTO vote_counts (election_ID, candidate_ID) VALUES ('$election_id', '$selected_candidate_id')";
+                    if (!mysqli_query($conn, $sql)) {
+                        $error_message = "Error adding candidates to election: " . mysqli_error($conn);
+                        $displayError = "d-block";
+                        break;
+                    }
+                } 
+            }
             $_SESSION['selected_candidates_id'] = [];
             $_SESSION['candidate_count'] = 0;
+            
             $error_message = "Election created successfully!";
             $displayError = "d-block";
             header("Location: Admin.php");
