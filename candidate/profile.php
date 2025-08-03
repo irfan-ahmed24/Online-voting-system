@@ -174,57 +174,222 @@ if (mysqli_num_rows($result2) > 0) {
                     </div>
                 </div>
                 <hr />
-                <?php endforeach; ?>
+               
             </div>
         </div>
+        <!-- Election Progress section-->
+        <?php
+        // Get current candidate's ID from session (we'll need to fetch it from database)
+        $current_candidate_email = $_SESSION['email'];
+        $candidate_id_sql = "SELECT ID FROM candidate WHERE email = ?";
+        $stmt = mysqli_prepare($conn, $candidate_id_sql);
+        mysqli_stmt_bind_param($stmt, "s", $current_candidate_email);
+        mysqli_stmt_execute($stmt);
+        $candidate_result = mysqli_stmt_get_result($stmt);
+        $current_candidate = mysqli_fetch_assoc($candidate_result);
+        $current_candidate_id = $current_candidate['ID'];
 
-        <!-- Voting Statistics -->
-        <div class="row mb-4">
-            <div class="col-md-4 mb-3">
-                <div class="card text-center stats-card bg-primary text-white h-100">
-                    <div class="card-body d-flex flex-column justify-content-center">
-                        <div class="stats-icon">
-                            <i class="fas fa-users fa-2x mb-3"></i>
-                        </div>
-                        <h3 class="mb-1 counter" data-target="1847">0</h3>
-                        <small class="opacity-75">Total Votes</small>
-                        <div class="progress mt-2" style="height: 3px;">
-                            <div class="progress-bar bg-white" style="width: 75%"></div>
-                        </div>
-                    </div>
-                </div>
+        // Fetch elections where this candidate is participating
+        $participating_elections_sql = "
+            SELECT DISTINCT 
+                e.election_ID,
+                e.election_name,
+                e.position,
+                e.starting_date,
+                e.ending_date,
+                e.status,
+                e.total_votes
+            FROM 
+                elections e
+            JOIN 
+                vote_counts vc ON e.election_ID = vc.election_ID
+            WHERE 
+                vc.candidate_ID = ?
+            ORDER BY e.starting_date DESC
+        ";
+        
+        $stmt = mysqli_prepare($conn, $participating_elections_sql);
+        mysqli_stmt_bind_param($stmt, "i", $current_candidate_id);
+        mysqli_stmt_execute($stmt);
+        $participating_elections_result = mysqli_stmt_get_result($stmt);
+        $participating_elections = [];
+        
+        while($election = mysqli_fetch_assoc($participating_elections_result)) {
+            $participating_elections[] = $election;
+        }
+        ?>
+
+        <?php if(!empty($participating_elections)): ?>
+        <?php foreach($participating_elections as $election):
+        $total_votes = $election['total_votes'];
+        ?>
+        <div class="card mb-4">
+            <div class="card-header">
+                
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Election Progress - <?php echo htmlspecialchars($election['election_name']); ?>
+                </h5>
+                <small class="text-muted">
+                    <i class="fas fa-user-tie me-1"></i>Position: <?php echo htmlspecialchars($election['position']); ?>
+                </small>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="card text-center stats-card bg-success text-white h-100">
-                    <div class="card-body d-flex flex-column justify-content-center">
-                        <div class="stats-icon">
-                            <i class="fas fa-percentage fa-2x mb-3"></i>
-                        </div>
-                        <h3 class="mb-1">42.5%</h3>
-                        <small class="opacity-75">Vote Share</small>
-                        <div class="progress mt-2" style="height: 3px;">
-                            <div class="progress-bar bg-white" style="width: 42.5%"></div>
-                        </div>
+            <div class="card-body">
+                <?php
+                // Get all candidates participating in this specific election with their vote counts
+                $election_candidates_sql = "
+                    SELECT 
+                        c.ID,
+                        c.firstName,
+                        c.lastName,
+                        c.groupName,
+                        vc.find_votes
+                    FROM 
+                        vote_counts vc
+                    JOIN 
+                        candidate c ON vc.candidate_ID = c.ID
+                    WHERE 
+                        vc.election_ID = ?
+                    ORDER BY vc.find_votes DESC
+                ";
+                
+                $stmt = mysqli_prepare($conn, $election_candidates_sql);
+                mysqli_stmt_bind_param($stmt, "s", $election['election_ID']);
+                mysqli_stmt_execute($stmt);
+                $election_candidates_result = mysqli_stmt_get_result($stmt);
+                $election_candidates = [];
+                
+                while($candidate = mysqli_fetch_assoc($election_candidates_result)) {
+                    $election_candidates[] = $candidate;
+                }
+                
+                ?>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Vote Share Comparison</h6>
+                        <?php if(!empty($election_candidates)): ?>
+                            <?php 
+                            $colors = ['primary', 'success', 'warning', 'info', 'secondary', 'danger'];
+                            $color_index = 0;
+                            ?>
+                            <?php foreach($election_candidates as $candidate): ?>
+                                <?php
+                                $is_current_candidate = ($candidate['ID'] == $current_candidate_id);
+                                $parcentage = $total_votes > 0 ? ($candidate['find_votes'] / $total_votes) * 100 : 0;
+                                ?>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="<?php echo $is_current_candidate ? 'fw-bold' : ''; ?>">
+                                            <?php echo htmlspecialchars($candidate['firstName'] . ' ' . $candidate['lastName']); ?>
+                                            <?php if($is_current_candidate): ?>
+                                                <span class="badge bg-primary badge-sm">You</span>
+                                            <?php endif; ?>
+                                            <small class="text-muted">(<?php echo htmlspecialchars($candidate['groupName']); ?>)</small>
+                                        </span>
+                                        <span class="text-<?php echo $color; ?> fw-bold">
+                                            <small class="text-muted">(<?php echo $parcentage ?>% votes)</small>
+                                        </span>
+                                    </div>
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar bg-blue" 
+                                             style="width: <?php echo $parcentage ?>%"></div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                No votes have been cast yet in this election.
+                            </div>
+                        <?php endif; ?>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card text-center stats-card bg-info text-white h-100">
-                    <div class="card-body d-flex flex-column justify-content-center">
-                        <div class="stats-icon">
-                            <i class="fas fa-trophy fa-2x mb-3"></i>
+                    <div class="col-md-6">
+                        <h6>Election Timeline</h6>
+                        <div class="timeline">
+                            <?php
+                            $start_date = new DateTime($election['starting_date']);
+                            $end_date = new DateTime($election['ending_date']);
+                            $current_date = new DateTime();
+                            $days_elapsed = $current_date->diff($start_date)->days;
+                            $days_left = $end_date->diff($current_date)->days;
+                            $has_started = $current_date >= $start_date;
+                            $has_ended = $current_date > $end_date;
+                            ?>
+                            
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-play-circle <?php echo $has_started ? 'text-success' : 'text-muted'; ?> fa-lg"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Election Started</h6>
+                                    <p class="text-muted mb-0"><?php echo $start_date->format('M d, Y - g:i A'); ?></p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-circle <?php echo ($has_started && !$has_ended) ? 'text-primary' : 'text-muted'; ?> fa-lg"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Current Status</h6>
+                                    <p class="text-muted mb-0">
+                                        <?php if($has_ended): ?>
+                                            Election Completed
+                                        <?php elseif($has_started): ?>
+                                            Voting in Progress
+                                            <?php if($days_elapsed > 0): ?>
+                                                - Day <?php echo $days_elapsed + 1; ?>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            Not Started Yet
+                                        <?php endif; ?>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-stop-circle <?php echo $has_ended ? 'text-danger' : ($days_left <= 2 ? 'text-warning' : 'text-muted'); ?> fa-lg"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">Election Ends</h6>
+                                    <p class="text-muted mb-0">
+                                        <?php echo $end_date->format('M d, Y - g:i A'); ?>
+                                        <?php if(!$has_ended && $has_started): ?>
+                                            <span class="badge bg-<?php echo $days_left <= 2 ? 'warning' : 'info'; ?> ms-2">
+                                                <?php echo $days_left; ?> day<?php echo $days_left != 1 ? 's' : ''; ?> left
+                                            </span>
+                                        <?php elseif($has_ended): ?>
+                                            <span class="badge bg-secondary ms-2">Completed</span>
+                                        <?php endif; ?>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <h3 class="mb-1">1st</h3>
-                        <small class="opacity-75">Current Position</small>
-                        <div class="mt-2">
-                            <span class="badge bg-white text-info">Leading</span>
+                        
+                        <!-- Election Statistics -->
+                        <div class="mt-4">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="bg-light p-2 rounded">
+                                        <h6 class="mb-0 text-primary"><?php echo count($election_candidates); ?></h6>
+                                        <small class="text-muted">Candidates</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-light p-2 rounded">
+                                        <h6 class="mb-0 text-success"><?php echo $total_votes; ?></h6>
+                                        <small class="text-muted">Total Votes</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Election Progress -->
+        <?php endforeach; ?>
+        <?php else: ?>
         <div class="card mb-4">
             <div class="card-header">
                 <h5 class="mb-0">
@@ -232,73 +397,16 @@ if (mysqli_num_rows($result2) > 0) {
                 </h5>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Vote Share Comparison</h6>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <span>John Doe (You)</span>
-                                <span class="text-primary fw-bold">42.5%</span>
-                            </div>
-                            <div class="progress mb-2">
-                                <div class="progress-bar bg-primary" style="width: 42.5%"></div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <span>Jane Smith</span>
-                                <span class="text-secondary">31.2%</span>
-                            </div>
-                            <div class="progress mb-2">
-                                <div class="progress-bar bg-secondary" style="width: 31.2%"></div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <span>Bob Johnson</span>
-                                <span class="text-info">26.3%</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar bg-info" style="width: 26.3%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Election Timeline</h6>
-                        <div class="timeline">
-                            <div class="d-flex mb-3">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-play-circle text-success fa-lg"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Election Started</h6>
-                                    <p class="text-muted mb-0">July 1, 2025</p>
-                                </div>
-                            </div>
-                            <div class="d-flex mb-3">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-circle text-primary fa-lg"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Current Status</h6>
-                                    <p class="text-muted mb-0">Voting in Progress - Day 28</p>
-                                </div>
-                            </div>
-                            <div class="d-flex">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-stop-circle text-danger fa-lg"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Election Ends</h6>
-                                    <p class="text-muted mb-0">July 31, 2025 (2 days left)</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h6>No Election Participation</h6>
+                    <p class="mb-0">You are not currently participating in any elections. Contact the administrator to be added to upcoming elections.</p>
                 </div>
             </div>
         </div>
+        <?php endif; ?>
     </div>
+     <?php endforeach; ?>
 
     <!-- Enhanced Styles -->
     <style>
