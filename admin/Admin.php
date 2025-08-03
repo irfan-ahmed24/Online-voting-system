@@ -1,8 +1,15 @@
 <?php 
 include './../config.php';
+include './fatchElection.php';
 //fatch total elections
 $sql1 = "SELECT * FROM elections WHERE status = 'active'";
 $result1 = mysqli_query($conn, $sql1);
+$elections = [];
+if ($result1) {
+    while ($row = mysqli_fetch_assoc($result1)) {
+        $elections[] = $row;
+    }
+}
 $totalElections = mysqli_num_rows($result1);
 //fatch total Users
 $sql2 = "SELECT * FROM all_users";
@@ -271,12 +278,17 @@ if ($result) {
                   <div
                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
                   >
-                    <h6 class="m-0 font-weight-bold text-primary">
+                    <h4 class="m-0 font-weight-bold text-primary">
                       Active Elections Result
-                    </h6>
+                    </h4>
                   </div>
+                  <?php foreach($elections as $election): ?>
                   <div class="card-body">
                     <div class="table-responsive">
+                      <h6 class="m-0 font-weight-bold text-primary text-center">
+                      <?php echo htmlspecialchars($election['election_name']); ?>
+                    </h6>
+                    <hr>
                       <table class="table table-striped table-hover">
                         <thead>
                           <tr>
@@ -286,8 +298,41 @@ if ($result) {
                             <th>Find Votes</th>
                           </tr>
                         </thead>
+                        
                         <tbody>
-                          <?php $i = 0; foreach ($candidates as $candidate): ?>
+                          <?php
+                            $election_id = $election['election_ID'];
+                            $candidates_sql = "
+                              SELECT 
+                                c.ID,
+                                c.firstName, 
+                                c.lastName, 
+                                c.email,
+                                c.phone,
+                                c.profilePic,
+                                c.groupName,
+                                c.massage,
+                                c.gender,
+                                vc.find_votes
+                              FROM 
+                                vote_counts vc
+                              JOIN 
+                                candidate c ON vc.candidate_ID = c.ID
+                              WHERE 
+                                vc.election_ID = ?
+                              ORDER BY vc.find_votes DESC
+                              ";
+                              $stmt = mysqli_prepare($conn, $candidates_sql);
+                              mysqli_stmt_bind_param($stmt, "s", $election_id);
+                              mysqli_stmt_execute($stmt);
+                              $candidates_result = mysqli_stmt_get_result($stmt);
+                              $participating_candidates = [];
+                        
+                              while($candidate = mysqli_fetch_assoc($candidates_result)) {
+                              $participating_candidates[] = $candidate;
+                              }
+                            ?>
+                          <?php $i = 0; foreach ($participating_candidates as $candidate): ?>
                           <tr>
                             <td><?php echo ++$i; ?></td>
                             <td>
@@ -297,11 +342,12 @@ if ($result) {
                             <td>
                               <?php echo htmlspecialchars($candidate['groupName']); ?>
                             </td>
-                            <td>calculating...</td> 
+                            <td><?php echo htmlspecialchars($candidate['find_votes']); ?></td> 
                           </tr>
 
                           <?php endforeach; ?>
                         </tbody>
+                        <?php endforeach; ?>
                       </table>
                     </div>
                   </div>

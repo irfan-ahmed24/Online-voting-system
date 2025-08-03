@@ -27,7 +27,6 @@ include './fatchElection.php';
             <th>SI</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Age</th>
             <th>Group Name</th>
             <th>Actions</th>
           </tr>
@@ -41,7 +40,6 @@ include './fatchElection.php';
               <?php echo htmlspecialchars($candidate['lastName']); ?>
               </td>
               <td><?php echo htmlspecialchars($candidate['email']); ?></td>
-              <td>calculating...</td>
               <td><?php echo htmlspecialchars($candidate['groupName']); ?></td>
               <td>
               <a href="editCandidate.php?id=<?php echo $candidate['ID']; ?>" class="btn btn-sm btn-warning">Edit</a>
@@ -64,10 +62,10 @@ include './fatchElection.php';
         <h1 class="h2">Election Results</h1>
       </div>
       <div class="alert alert-info">
-        <?php $i = 0; foreach ($elections as $election): ?>
-          <?php 
-          $totalVotes = $election['total_votes'];
-            ?>
+        <?php $i = 0; foreach ($elections as $election): 
+        $totalVotes = $election['total_votes'];
+          ?>
+          
        <!-- all election result start here -->
         <div class="card mb-4">
             <div class="card-header bg-primary">
@@ -145,16 +143,19 @@ include './fatchElection.php';
                         <h6>Vote Share Comparison</h6>
                         <!-- candidate vote share comparison will be displayed here. -->
                          <?php foreach($participating_candidates as $candidate): ?>
+                          <?php 
+                          $parcentage = $totalVotes > 0 ? round(($candidate['find_votes'] / $totalVotes) * 100, 2) : 0;
+                          ?>
                         <div class="mb-3">
                             <div class="d-flex justify-content-between">
                                 <span>
                                   <?php echo htmlspecialchars($candidate['firstName']); ?>
                                   <?php echo htmlspecialchars($candidate['lastName']); ?>
                               </span>
-                                <span class="text-primary fw-bold"><?php echo htmlspecialchars($candidate['find_votes']); ?></span>
+                                <span class="text-primary fw-bold"><?php echo $parcentage; ?>%</span>
                             </div>
                             <div class="progress mb-2">
-                                <div class="progress-bar bg-primary" style="width: 42.5%"></div>
+                                <div class="progress-bar bg-primary" style="width:<?php echo $parcentage?>%"></div>
                             </div>
                         </div>
                         <?php endforeach; ?>
