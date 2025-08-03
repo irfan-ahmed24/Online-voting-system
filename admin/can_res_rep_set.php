@@ -65,6 +65,9 @@ include './fatchElection.php';
       </div>
       <div class="alert alert-info">
         <?php $i = 0; foreach ($elections as $election): ?>
+          <?php 
+          $totalVotes = $election['total_votes'];
+            ?>
        <!-- all election result start here -->
         <div class="card mb-4">
             <div class="card-header bg-primary">
@@ -74,25 +77,7 @@ include './fatchElection.php';
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6 br-1">
-                        <h6>Vote Share Comparison</h6>
-                        <!-- candidate vote share comparison will be displayed here. -->
-                         <?php $i = 0; foreach ($candidates as $candidate): ?>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <span>
-                                  <?php echo htmlspecialchars($candidate['firstName']); ?>
-                                  <?php echo htmlspecialchars($candidate['lastName']); ?>
-                              </span>
-                                <span class="text-primary fw-bold">42.5%</span>
-                            </div>
-                            <div class="progress mb-2">
-                                <div class="progress-bar bg-primary" style="width: 42.5%"></div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <div class="col-md-6">
+                  <div class="col-md-4 border-end border-3 border-danger p-3">
                         <h6>Election Timeline</h6>
                         <div class="timeline">
                             <div class="d-flex mb-3">
@@ -123,6 +108,56 @@ include './fatchElection.php';
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <?php
+                     $election_id = $election['election_ID'];
+                        $candidates_sql = "
+                            SELECT 
+                                c.ID,
+                                c.firstName, 
+                                c.lastName, 
+                                c.email,
+                                c.phone,
+                                c.profilePic,
+                                c.groupName,
+                                c.massage,
+                                c.gender,
+                                vc.find_votes
+                            FROM 
+                                vote_counts vc
+                            JOIN 
+                                candidate c ON vc.candidate_ID = c.ID
+                            WHERE 
+                                vc.election_ID = ?
+                            ORDER BY vc.find_votes DESC
+                        ";
+                        $stmt = mysqli_prepare($conn, $candidates_sql);
+                        mysqli_stmt_bind_param($stmt, "s", $election_id);
+                        mysqli_stmt_execute($stmt);
+                        $candidates_result = mysqli_stmt_get_result($stmt);
+                        $participating_candidates = [];
+                        
+                        while($candidate = mysqli_fetch_assoc($candidates_result)) {
+                            $participating_candidates[] = $candidate;
+                        }
+                        ?>
+                    <div class="col-md-8 br-1">
+                        <h6>Vote Share Comparison</h6>
+                        <!-- candidate vote share comparison will be displayed here. -->
+                         <?php foreach($participating_candidates as $candidate): ?>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>
+                                  <?php echo htmlspecialchars($candidate['firstName']); ?>
+                                  <?php echo htmlspecialchars($candidate['lastName']); ?>
+                              </span>
+                                <span class="text-primary fw-bold"><?php echo htmlspecialchars($candidate['find_votes']); ?></span>
+                            </div>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-primary" style="width: 42.5%"></div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
