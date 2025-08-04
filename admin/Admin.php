@@ -468,15 +468,21 @@ $totalVotes = $totalVotesRow['total_votes'] ? $totalVotesRow['total_votes'] : 0;
                         <i class="fas fa-plus me-2"></i>
                         Create New Election
                       </a>
-                      <a href="elections.php" class="btn btn-outline-primary btn-lg">
+                      <a href="#" 
+                      onclick="showSection('elections')" 
+                      class="btn btn-outline-primary btn-lg">
                         <i class="fas fa-list me-2"></i>
                         Manage Elections
                       </a>
-                      <a href="#" class="btn btn-outline-secondary btn-lg">
+                      <a href="#"
+                      onclick="showSection('users')"
+                       class="btn btn-outline-secondary btn-lg">
                         <i class="fas fa-users me-2"></i>
                         View All Users
                       </a>
-                      <a href="#" class="btn btn-outline-info btn-lg">
+                      <a href="#"
+                      onclick="showSection('reports')"
+                       class="btn btn-outline-info btn-lg">
                         <i class="fas fa-user-plus me-2"></i>
                         Candidate Reports
                       </a>

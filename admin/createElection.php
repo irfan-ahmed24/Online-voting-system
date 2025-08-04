@@ -40,12 +40,20 @@ if (isset($_POST['submit'])) {
     $position = $_POST['position'];
     $starting_date = $_POST['starting_date'];
     $ending_date = $_POST['ending_date'];
+    $now = date('Y-m-d H:i:s');
+    if ($now >= $starting_date && $now <= $ending_date) {
+      $status = 'active';
+    } elseif ($now < $starting_date) {
+      $status = 'upcoming';
+    } else {
+      $status = 'completed';
+    }
 
     if (empty($election_name) || empty($position) || empty($starting_date) || empty($ending_date)) {
         $error_message = "All fields are required.";
         $displayError = "d-block";
     } else {
-        $sql = "INSERT INTO elections (election_ID,election_name, position, starting_date, ending_date,candidateParticipate) VALUES ('$election_id','$election_name', '$position', '$starting_date', '$ending_date','$candidate_count')";
+        $sql = "INSERT INTO elections (election_ID,election_name, position, starting_date, ending_date,status,candidateParticipate) VALUES ('$election_id','$election_name', '$position', '$starting_date', '$ending_date','$status','$candidate_count')";
         if (!mysqli_query($conn, $sql)) {
             $error_message = "Error creating election: " . mysqli_error($conn);
             $displayError = "d-block";
