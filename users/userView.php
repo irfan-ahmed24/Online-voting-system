@@ -143,7 +143,7 @@ include "./../admin/fatchElection.php";
               <div class="card stat-card text-center h-100">
                 <div class="card-body">
                   <i class="fas fa-clock fa-2x text-warning mb-2"></i>
-                  <h4 class="card-title text-warning"><?php echo $totalElections ?></h4>
+                  <h4 class="card-title text-warning"><?php echo $activeElectionnumber ?></h4>
                   <p class="card-text text-muted">Active Elections</p>
                 </div>
               </div>

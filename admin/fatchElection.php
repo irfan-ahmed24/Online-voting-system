@@ -9,4 +9,13 @@ if ($result) {
         $elections[] = $row;
     }
 }
+$sql = "SELECT * FROM elections where status='active'";
+$activeElectionnumber= mysqli_num_rows(mysqli_query($conn, $sql));
+$result = mysqli_query($conn, $sql);
+$activeElections = [];
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $activeElections[] = $row;
+    }
+}
 ?>
