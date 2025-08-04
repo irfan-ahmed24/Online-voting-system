@@ -1,6 +1,7 @@
 <?php
 include "./../user_info.php";
 include "./../admin/fatchElection.php";
+include "./giveVote.php";
 ?>
 
 <!DOCTYPE html>
@@ -498,76 +499,8 @@ include "./../admin/fatchElection.php";
       let selectedCandidate = null;
 
       function selectCandidate(candidateId) {
-        const candidates = {
-          alice: {
-            name: "Alice Johnson",
-            party: "Democratic Party",
-            img: "https://via.placeholder.com/60",
-          },
-          bob: {
-            name: "Bob Wilson",
-            party: "Republican Party",
-            img: "https://via.placeholder.com/60",
-          },
-          carol: {
-            name: "Carol Smith",
-            party: "Green Party",
-            img: "https://via.placeholder.com/60",
-          },
-        };
-
-        selectedCandidate = candidates[candidateId];
-
-        // Update modal content
-        document.getElementById("selectedCandidateImg").src =
-          selectedCandidate.img;
-        document.getElementById("selectedCandidateName").textContent =
-          selectedCandidate.name;
-        document.getElementById("selectedCandidateParty").textContent =
-          selectedCandidate.party;
-
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById("voteModal"));
-        modal.show();
+        alert(`you Voted for ${candidateId}`);
       }
-
-      function confirmVote() {
-        if (selectedCandidate) {
-          // Here you would normally send the vote to the server
-          alert(`Vote confirmed for ${selectedCandidate.name}!`);
-
-          // Close modal
-          const modal = bootstrap.Modal.getInstance(
-            document.getElementById("voteModal")
-          );
-          modal.hide();
-
-          // Show success message or redirect
-          showVoteSuccess();
-        }
-      }
-
-      function showVoteSuccess() {
-        const successAlert = document.createElement("div");
-        successAlert.className =
-          "alert alert-success alert-dismissible fade show position-fixed";
-        successAlert.style.cssText =
-          "top: 80px; right: 20px; z-index: 9999; min-width: 300px;";
-        successAlert.innerHTML = `
-                <i class="fas fa-check-circle me-2"></i>
-                <strong>Vote Submitted!</strong> Your vote has been recorded successfully.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-        document.body.appendChild(successAlert);
-
-        // Remove after 5 seconds
-        setTimeout(() => {
-          if (successAlert.parentNode) {
-            successAlert.parentNode.removeChild(successAlert);
-          }
-        }, 5000);
-      }
-
       function viewLocalCandidates() {
         alert(
           "Local candidates view would be implemented here with a detailed candidate listing."

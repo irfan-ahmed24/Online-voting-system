@@ -119,12 +119,12 @@ if ($remainingTime > 0) {
             <p class="card-text small">
               <?php echo htmlspecialchars($candidate['massage']) ?>
             </p>
-            <button
+            <a href="giveVote.php?election_id=<?php echo $election['election_ID'] ?>&candidate_id=<?php echo $candidate['ID'] ?>"
               class="btn btn-outline-primary btn-sm w-100 <?php echo $statusCalcolate ? '' : 'disabled'; ?>"
-              onclick="selectCandidate('alice')"
+              onclick="selectCandidate('<?php echo $candidate['firstName'];?>')"
             >
               <i class="fas fa-vote-yea me-1"></i>Vote
-            </button>
+            </a>
           </div>
         </div>
       </div>

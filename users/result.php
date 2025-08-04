@@ -59,7 +59,7 @@ include "./../admin/fatchUsers.php";
                 ?>
                 <?php 
                     foreach($participating_candidates as $candidate): 
-                    $parcentageVotes = $totalVotes > 0 ? ($candidate['find_votes'] / $totalVotes) * 100 : 0;
+                    $parcentageVotes = floor($totalVotes > 0 ? ($candidate['find_votes'] / $totalVotes) * 100 : 0);
 
                   ?>
 
