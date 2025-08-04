@@ -48,7 +48,7 @@ if ($result) {
             <p><strong>Total Votes:</strong> <?php echo htmlspecialchars($election['total_votes']); ?></p>
             <div class="btn-group" role="group">
               <button class="btn btn-sm btn-outline-info" onclick="showSection('results')">View Results</button>
-              <button class="btn btn-sm btn-outline-warning">Suspend</button>
+              <a href="deleteElection.php?id=<?php echo $election['election_ID']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this Election');">Delete</a>
             </div>
           </div>
         </div>

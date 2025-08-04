@@ -24,7 +24,6 @@ include './fatchUsers.php';
             <th>SI</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Age</th>
             <th>Ragistration date</th>
             <th>Actions</th>
           </tr>
@@ -38,7 +37,6 @@ include './fatchUsers.php';
               <?php echo htmlspecialchars($user['lastName']); ?>
               </td>
               <td><?php echo htmlspecialchars($user['email']); ?></td>
-              <td>calculating...</td>
               
               <td><?php echo htmlspecialchars($user['reg_date']); ?></td>
               <td>
