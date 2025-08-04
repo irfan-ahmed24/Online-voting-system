@@ -15,6 +15,7 @@ $totalElections = mysqli_num_rows($result1);
 $sql2 = "SELECT * FROM all_users";
 $result2 = mysqli_query($conn, $sql2);
 $totalUsers = mysqli_num_rows($result2);
+
 // Fetch total candidates
 $sql = "SELECT * FROM candidate";
 $result = mysqli_query($conn, $sql);
@@ -25,6 +26,12 @@ if ($result) {
         $candidates[] = $row;
     }
 }
+
+// Calculate total votes across all elections
+$totalVotesSql = "SELECT SUM(find_votes) as total_votes FROM vote_counts";
+$totalVotesResult = mysqli_query($conn, $totalVotesSql);
+$totalVotesRow = mysqli_fetch_assoc($totalVotesResult);
+$totalVotes = $totalVotesRow['total_votes'] ? $totalVotesRow['total_votes'] : 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -235,7 +242,7 @@ if ($result) {
                           Total Votes
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          0
+                          <?php echo $totalVotes; ?>
                         </div>
                       </div>
                       <div class="col-auto">
@@ -275,81 +282,174 @@ if ($result) {
             <div class="row">
               <div class="col-lg-8 mb-4">
                 <div class="card shadow">
-                  <div
-                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
-                  >
+                  <div class="card-header py-3">
                     <h4 class="m-0 font-weight-bold text-primary">
-                      Active Elections Result
+                      Active Elections Results
                     </h4>
                   </div>
-                  <?php foreach($elections as $election): ?>
                   <div class="card-body">
-                    <div class="table-responsive">
-                      <h6 class="m-0 font-weight-bold text-primary text-center">
-                      <?php echo htmlspecialchars($election['election_name']); ?>
-                    </h6>
-                    <hr>
-                      <table class="table table-striped table-hover">
-                        <thead>
-                          <tr>
-                            <th>Position</th>
-                            <th>Name</th>
-                            <th>Political Party</th>
-                            <th>Find Votes</th>
-                          </tr>
-                        </thead>
-                        
-                        <tbody>
-                          <?php
-                            $election_id = $election['election_ID'];
-                            $candidates_sql = "
-                              SELECT 
-                                c.ID,
-                                c.firstName, 
-                                c.lastName, 
-                                c.email,
-                                c.phone,
-                                c.profilePic,
-                                c.groupName,
-                                c.massage,
-                                c.gender,
-                                vc.find_votes
-                              FROM 
-                                vote_counts vc
-                              JOIN 
-                                candidate c ON vc.candidate_ID = c.ID
-                              WHERE 
-                                vc.election_ID = ?
-                              ORDER BY vc.find_votes DESC
-                              ";
-                              $stmt = mysqli_prepare($conn, $candidates_sql);
-                              mysqli_stmt_bind_param($stmt, "s", $election_id);
-                              mysqli_stmt_execute($stmt);
-                              $candidates_result = mysqli_stmt_get_result($stmt);
-                              $participating_candidates = [];
-                        
-                              while($candidate = mysqli_fetch_assoc($candidates_result)) {
-                              $participating_candidates[] = $candidate;
-                              }
-                            ?>
-                          <?php $i = 0; foreach ($participating_candidates as $candidate): ?>
-                          <tr>
-                            <td><?php echo ++$i; ?></td>
-                            <td>
-                              <?php echo htmlspecialchars($candidate['firstName']); ?>
-                              <?php echo htmlspecialchars($candidate['lastName']); ?>
-                            </td>
-                            <td>
-                              <?php echo htmlspecialchars($candidate['groupName']); ?>
-                            </td>
-                            <td><?php echo htmlspecialchars($candidate['find_votes']); ?></td> 
-                          </tr>
-
-                          <?php endforeach; ?>
-                        </tbody>
-                        <?php endforeach; ?>
-                      </table>
+                    <?php if(empty($elections)): ?>
+                    <div class="alert alert-info text-center">
+                      <i class="fas fa-info-circle fa-2x mb-3"></i>
+                      <h5>No Active Elections</h5>
+                      <p class="mb-0">There are no active elections at the moment.</p>
                     </div>
+                    <?php else: ?>
+                    <?php foreach($elections as $election): ?>
+                    <div class="election-section mb-4">
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                          <i class="fas fa-vote-yea me-2"></i>
+                          <?php echo htmlspecialchars($election['election_name']); ?>
+                        </h6>
+                        <span class="badge bg-success"><?php echo htmlspecialchars($election['status']); ?></span>
+                      </div>
+                      
+                      <?php
+                        $election_id = $election['election_ID'];
+                        $candidates_sql = "
+                          SELECT 
+                            c.ID,
+                            c.firstName, 
+                            c.lastName, 
+                            c.email,
+                            c.phone,
+                            c.profilePic,
+                            c.groupName,
+                            c.massage,
+                            c.gender,
+                            vc.find_votes
+                          FROM 
+                            vote_counts vc
+                          JOIN 
+                            candidate c ON vc.candidate_ID = c.ID
+                          WHERE 
+                            vc.election_ID = ?
+                          ORDER BY vc.find_votes DESC
+                        ";
+                        $stmt = mysqli_prepare($conn, $candidates_sql);
+                        mysqli_stmt_bind_param($stmt, "s", $election_id);
+                        mysqli_stmt_execute($stmt);
+                        $candidates_result = mysqli_stmt_get_result($stmt);
+                        $participating_candidates = [];
+                  
+                        while($candidate = mysqli_fetch_assoc($candidates_result)) {
+                          $participating_candidates[] = $candidate;
+                        }
+                      ?>
+                      
+                      <?php if(empty($participating_candidates)): ?>
+                      <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        No candidates participating in this election yet.
+                      </div>
+                      <?php else: ?>
+                      <div class="table-responsive">
+                        <table class="table table-hover">
+                          <thead class="table-light">
+                            <tr>
+                              <th width="10%">Rank</th>
+                              <th width="30%">Candidate Name</th>
+                              <th width="25%">Political Party</th>
+                              <th width="15%">Votes</th>
+                              <th width="20%">Vote Share</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <?php 
+                            $total_election_votes = array_sum(array_column($participating_candidates, 'find_votes'));
+                            if($total_election_votes == 0) $total_election_votes = 1; // Prevent division by zero
+                            ?>
+                            <?php $rank = 1; foreach ($participating_candidates as $candidate): ?>
+                            <?php $vote_percentage = ($candidate['find_votes'] / $total_election_votes) * 100; ?>
+                            <tr>
+                              <td>
+                                <span class="badge bg-<?php echo $rank == 1 ? 'warning' : ($rank == 2 ? 'secondary' : 'light'); ?> text-dark">
+                                  <?php if($rank == 1): ?>
+                                    <i class="fas fa-trophy"></i>
+                                  <?php elseif($rank == 2): ?>
+                                    <i class="fas fa-medal"></i>
+                                  <?php else: ?>
+                                    <?php echo $rank; ?>
+                                  <?php endif; ?>
+                                </span>
+                              </td>
+                              <td>
+                                <div class="d-flex align-items-center">
+                                  <img src="candidateImage/<?php echo !empty($candidate['profilePic']) ? htmlspecialchars($candidate['profilePic']) : 'default.png'; ?>" 
+                                       class="rounded-circle me-2" width="32" height="32"
+                                       onerror="this.src='https://via.placeholder.com/32x32/6c757d/ffffff?text=?'">
+                                  <div>
+                                    <div class="fw-bold">
+                                      <?php echo htmlspecialchars($candidate['firstName'] . ' ' . $candidate['lastName']); ?>
+                                    </div>
+                                    <small class="text-muted"><?php echo htmlspecialchars($candidate['email']); ?></small>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <span class="badge bg-primary bg-gradient">
+                                  <?php echo htmlspecialchars($candidate['groupName']); ?>
+                                </span>
+                              </td>
+                              <td>
+                                <span class="fw-bold text-success">
+                                  <?php echo number_format($candidate['find_votes']); ?>
+                                </span>
+                              </td>
+                              <td>
+                                <div class="progress" style="height: 20px;">
+                                  <div class="progress-bar bg-<?php echo $rank == 1 ? 'success' : 'primary'; ?>" 
+                                       style="width: <?php echo $vote_percentage; ?>%">
+                                    <?php echo number_format($vote_percentage, 1); ?>%
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                            <?php $rank++; endforeach; ?>
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <!-- Election Summary -->
+                      <div class="row mt-3">
+                        <div class="col-md-4">
+                          <div class="text-center p-2 bg-light rounded">
+                            <i class="fas fa-users text-primary"></i>
+                            <div class="fw-bold"><?php echo count($participating_candidates); ?></div>
+                            <small class="text-muted">Candidates</small>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="text-center p-2 bg-light rounded">
+                            <i class="fas fa-vote-yea text-success"></i>
+                            <div class="fw-bold"><?php echo number_format($total_election_votes); ?></div>
+                            <small class="text-muted">Total Votes</small>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="text-center p-2 bg-light rounded">
+                            <i class="fas fa-calendar text-info"></i>
+                            <div class="fw-bold">
+                              <?php 
+                              $end_date = new DateTime($election['ending_date']);
+                              $current_date = new DateTime();
+                              $days_left = $end_date->diff($current_date)->days;
+                              echo $days_left;
+                              ?>
+                            </div>
+                            <small class="text-muted">Days Left</small>
+                          </div>
+                        </div>
+                      </div>
+                      <?php endif; ?>
+                      
+                      <?php if($election !== end($elections)): ?>
+                      <hr class="my-4">
+                      <?php endif; ?>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
                   </div>
                 </div>
               </div>
@@ -357,37 +457,29 @@ if ($result) {
               <div class="col-lg-4 mb-4">
                 <div class="card shadow">
                   <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
+                    <h4 class="m-0 font-weight-bold text-primary">
+                      <i class="fas fa-tools me-2"></i>
                       Quick Actions
-                    </h6>
+                    </h4>
                   </div>
                   <div class="card-body">
                     <div class="d-grid gap-2">
-                      <button
-                        class="btn btn-primary"
-                        onclick="showSection('elections')"
-                      >
-                        <i class="fas fa-plus me-2"></i>Create Election
-                      </button>
-
-                      <button
-                        class="btn btn-info"
-                        onclick="showSection('users')"
-                      >
-                        <i class="fas fa-users me-2"></i>Manage Users
-                      </button>
-                      <button
-                        class="btn btn-warning"
-                        onclick="showSection('results')"
-                      >
-                        <i class="fas fa-chart-line me-2"></i>View Results
-                      </button>
-                      <button
-                        class="btn btn-danger"
-                        onclick="showSection('reports')"
-                      >
-                        <i class="fas fa-chart-line me-2"></i>View Reports
-                      </button>
+                      <a href="createElection.php" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus me-2"></i>
+                        Create New Election
+                      </a>
+                      <a href="elections.php" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-list me-2"></i>
+                        Manage Elections
+                      </a>
+                      <a href="#" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-users me-2"></i>
+                        View All Users
+                      </a>
+                      <a href="#" class="btn btn-outline-info btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Candidate Reports
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -530,9 +622,59 @@ if ($result) {
           background: #343a40;
         }
       }
-    </style>
-
-    <!-- Admin Panel JavaScript -->
+        .activity-icon {
+          transition: all 0.3s ease;
+        }
+        
+        .activity-icon:hover {
+          transform: scale(1.1);
+        }
+        
+        .badge {
+          font-size: 0.85em;
+        }
+        
+        .progress {
+          background-color: #f8f9fa;
+        }
+        
+        .progress-bar {
+          transition: width 0.6s ease;
+        }
+        
+        .table-hover tbody tr:hover {
+          background-color: rgba(0,123,255,0.1);
+        }
+        
+        .election-section {
+          transition: all 0.3s ease;
+          border-radius: 8px;
+          padding: 1rem;
+          margin-bottom: 1.5rem;
+        }
+        
+        .election-section:hover {
+          background-color: rgba(248, 249, 250, 0.5);
+        }
+        
+        .card {
+          transition: box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+          box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+        }
+        
+        .system-status .status-item {
+          transition: all 0.2s ease;
+          padding: 0.5rem;
+          border-radius: 4px;
+        }
+        
+        .system-status .status-item:hover {
+          background-color: rgba(0,123,255,0.05);
+        }
+      </style>    <!-- Admin Panel JavaScript -->
     <script>
       function showSection(sectionId) {
         // Hide all sections

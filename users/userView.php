@@ -22,6 +22,7 @@ include "./giveVote.php";
     <title>User Dashboard - Online Voting System</title>
   </head>
   <body>
+    
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container">
