@@ -720,6 +720,88 @@ $totalVotes = $totalVotesRow['total_votes'] ? $totalVotesRow['total_votes'] : 0;
           .insertBefore(toggleBtn, navbar.querySelector(".navbar-brand"));
       }
     </script>
+
+    <!-- Live Status Update Script -->
+    <script>
+      // Live election status updates
+      let statusUpdateInterval;
+
+      function updateElectionStatusLive() {
+        fetch('updateElectionStatus.php')
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Update statistics cards if they exist
+              const totalUsersElement = document.querySelector('.text-gray-800');
+              if (totalUsersElement && totalUsersElement.textContent.includes('<?php echo $totalUsers; ?>')) {
+                // Update any dynamic content here
+                console.log('Live status updated:', data);
+              }
+              
+              // Update status indicators
+              const electionStatusElement = document.querySelector('.badge:contains("Active")');
+              if (electionStatusElement) {
+                electionStatusElement.textContent = `${data.active_elections} Active`;
+              }
+              
+              // Show notification for status changes (optional)
+              if (data.status_changes > 0) {
+                showStatusUpdateNotification(data);
+              }
+            }
+          })
+          .catch(error => {
+            console.error('Error updating election statuses:', error);
+          });
+      }
+
+      function showStatusUpdateNotification(data) {
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-info alert-dismissible fade show position-fixed';
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+          <i class="fas fa-sync-alt me-2"></i>
+          Election statuses updated automatically
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(notification);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 3000);
+      }
+
+      // Initialize live updates
+      document.addEventListener('DOMContentLoaded', function() {
+        // Update election status immediately
+        updateElectionStatusLive();
+        
+        // Set up periodic updates every 60 seconds
+        statusUpdateInterval = setInterval(updateElectionStatusLive, 60000);
+        
+        console.log('Admin Dashboard - Live status updates enabled');
+      });
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', function() {
+        if (statusUpdateInterval) {
+          clearInterval(statusUpdateInterval);
+        }
+      });
+
+      // Manual refresh function
+      function refreshDashboard() {
+        updateElectionStatusLive();
+        
+        // Reload the page to get fresh data
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    </script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"

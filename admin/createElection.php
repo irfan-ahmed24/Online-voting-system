@@ -257,6 +257,43 @@ if (isset($_POST['submit'])) {
                   </div>
                 </div>
 
+                <!-- Live Date and Status Display -->
+                <div class="row mb-4">
+                  <div class="col-12">
+                    <div class="alert alert-info border-0" id="liveDateStatus">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="d-flex align-items-center">
+                            <i class="fas fa-clock fa-2x text-primary me-3"></i>
+                            <div>
+                              <h6 class="mb-1">Current Date & Time</h6>
+                              <span id="currentDateTime" class="fw-bold text-dark"></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="d-flex align-items-center">
+                            <i class="fas fa-hourglass-half fa-2x text-warning me-3"></i>
+                            <div>
+                              <h6 class="mb-1">Election Duration</h6>
+                              <span id="electionDuration" class="fw-bold text-dark">Not calculated</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="d-flex align-items-center">
+                            <i class="fas fa-chart-line fa-2x text-success me-3"></i>
+                            <div>
+                              <h6 class="mb-1">Predicted Status</h6>
+                              <span id="predictedStatus" class="badge bg-secondary">Not determined</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Election Duration Display -->
                            <!-- Candidate List -->
                   <div class="row" id="candidateList">
@@ -336,7 +373,7 @@ if (isset($_POST['submit'])) {
                         />
                       </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                       <select
                         class="form-select"
                         id="partyFilter"
@@ -353,6 +390,16 @@ if (isset($_POST['submit'])) {
                         <option value="Independent">Independent</option>
                         <option value="Other">Other</option>
                       </select>
+                    </div>
+                    <div class="col-md-2">
+                      <button
+                        type="button"
+                        class="btn btn-outline-info w-100"
+                        onclick="refreshElectionData()"
+                        title="Refresh election data"
+                      >
+                        <i class="fas fa-sync-alt"></i>
+                      </button>
                     </div>
                   </div>
 
@@ -545,7 +592,131 @@ if (isset($_POST['submit'])) {
     </style>
 
     <!-- Custom JavaScript -->
-    <!-- <script>
+    <script>
+        // Live date and time update
+        let dateTimeInterval;
+        let statusUpdateInterval;
+
+        function updateCurrentDateTime() {
+            const now = new Date();
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+            
+            // Update election duration and status when dates change
+            updateElectionPreview();
+        }
+
+        function updateElectionPreview() {
+            const startDate = document.getElementById('starting_date').value;
+            const endDate = document.getElementById('ending_date').value;
+            const now = new Date();
+            
+            if (startDate && endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                
+                // Calculate duration
+                const diffTime = Math.abs(end - start);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const diffHours = Math.ceil((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const diffMinutes = Math.ceil((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+                
+                if (end > start) {
+                    let durationText = '';
+                    if (diffDays > 0) {
+                        durationText = `${diffDays} day(s)`;
+                        if (diffHours > 0) {
+                            durationText += ` ${diffHours} hour(s)`;
+                        }
+                    } else if (diffHours > 0) {
+                        durationText = `${diffHours} hour(s)`;
+                        if (diffMinutes > 0) {
+                            durationText += ` ${diffMinutes} minute(s)`;
+                        }
+                    } else {
+                        durationText = `${diffMinutes} minute(s)`;
+                    }
+                    
+                    document.getElementById('electionDuration').textContent = durationText;
+                    
+                    // Determine predicted status
+                    let status = '';
+                    let statusClass = '';
+                    
+                    if (now >= start && now <= end) {
+                        status = 'Active';
+                        statusClass = 'bg-success';
+                    } else if (now < start) {
+                        status = 'Upcoming';
+                        statusClass = 'bg-warning';
+                        
+                        // Calculate time until start
+                        const timeToStart = start - now;
+                        const daysToStart = Math.ceil(timeToStart / (1000 * 60 * 60 * 24));
+                        const hoursToStart = Math.ceil((timeToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        
+                        if (daysToStart > 0) {
+                            status += ` (in ${daysToStart} day(s))`;
+                        } else if (hoursToStart > 0) {
+                            status += ` (in ${hoursToStart} hour(s))`;
+                        } else {
+                            status += ' (starting soon)';
+                        }
+                    } else {
+                        status = 'Completed';
+                        statusClass = 'bg-secondary';
+                    }
+                    
+                    const statusElement = document.getElementById('predictedStatus');
+                    statusElement.textContent = status;
+                    statusElement.className = `badge ${statusClass}`;
+                    
+                } else {
+                    document.getElementById('electionDuration').textContent = 'Invalid date range';
+                    const statusElement = document.getElementById('predictedStatus');
+                    statusElement.textContent = 'Invalid dates';
+                    statusElement.className = 'badge bg-danger';
+                }
+            } else {
+                document.getElementById('electionDuration').textContent = 'Select dates to calculate';
+                const statusElement = document.getElementById('predictedStatus');
+                statusElement.textContent = 'Not determined';
+                statusElement.className = 'badge bg-secondary';
+            }
+        }
+
+        // Update election status in database
+        function updateElectionStatusInDatabase() {
+            fetch('updateElectionStatus.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=update_status'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Election statuses updated:', data);
+                    // You can update UI elements here if needed
+                    // For example, show a notification or update counters
+                } else {
+                    console.error('Failed to update election statuses:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating election statuses:', error);
+            });
+        }
+
         // Form validation
         (function() {
             'use strict';
@@ -562,83 +733,6 @@ if (isset($_POST['submit'])) {
                 });
             }, false);
         })();
-
-        // Calculate and display election duration
-        function updateDuration() {
-            const startDate = document.getElementById('starting_date').value;
-            const endDate = document.getElementById('ending_date').value;
-            
-            if (startDate && endDate) {
-                const start = new Date(startDate);
-                const end = new Date(endDate);
-                const diffTime = Math.abs(end - start);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
-                if (end > start) {
-                    document.getElementById('durationText').textContent = `${diffDays} day(s)`;
-                    document.getElementById('durationAlert').style.display = 'block';
-                    document.getElementById('durationAlert').className = 'alert alert-info border-0';
-                } else {
-                    document.getElementById('durationText').textContent = 'Invalid date range';
-                    document.getElementById('durationAlert').style.display = 'block';
-                    document.getElementById('durationAlert').className = 'alert alert-danger border-0';
-                }
-            } else {
-                document.getElementById('durationAlert').style.display = 'none';
-            }
-        }
-
-        // Event listeners for date inputs
-        document.getElementById('starting_date').addEventListener('change', updateDuration);
-        document.getElementById('ending_date').addEventListener('change', updateDuration);
-
-        // Candidate selection functions
-        function toggleCandidate(candidateId) {
-            const checkbox = document.getElementById(`candidate_${candidateId}`);
-            const card = checkbox.closest('.candidate-card');
-            const button = card.querySelector('.add-candidate-btn');
-            
-            checkbox.checked = !checkbox.checked;
-            
-            if (checkbox.checked) {
-                card.classList.add('selected');
-                button.classList.add('active');
-                button.innerHTML = '<i class="fas fa-check me-1"></i>Added to Election';
-            } else {
-                card.classList.remove('selected');
-                button.classList.remove('active');
-                button.innerHTML = '<i class="fas fa-plus me-1"></i>Add to Election';
-            }
-            
-            updateSelectedCount();
-        }
-
-        function updateSelectedCount() {
-            const selectedCheckboxes = document.querySelectorAll('.candidate-checkbox:checked');
-            const count = selectedCheckboxes.length;
-            
-            document.getElementById('selectedCount').textContent = count;
-            
-            if (count > 0) {
-                document.getElementById('selectedSummary').style.display = 'block';
-            } else {
-                document.getElementById('selectedSummary').style.display = 'none';
-            }
-        }
-
-        function selectAllCandidates() {
-            const checkboxes = document.querySelectorAll('.candidate-checkbox:not(:checked)');
-            checkboxes.forEach(checkbox => {
-                checkbox.click();
-            });
-        }
-
-        function clearAllCandidates() {
-            const checkboxes = document.querySelectorAll('.candidate-checkbox:checked');
-            checkboxes.forEach(checkbox => {
-                checkbox.click();
-            });
-        }
 
         // Filter candidates
         function filterCandidates() {
@@ -664,56 +758,75 @@ if (isset($_POST['submit'])) {
             });
         }
 
-        // Preview election
-        function previewElection() {
-            const electionName = document.getElementById('election_name').value;
-            const position = document.getElementById('position').value;
-            const startDate = document.getElementById('starting_date').value;
-            const endDate = document.getElementById('ending_date').value;
-            const selectedCandidates = document.querySelectorAll('.candidate-checkbox:checked');
-            
-            let candidatesList = '';
-            selectedCandidates.forEach(checkbox => {
-                const card = checkbox.closest('.candidate-card');
-                const name = card.querySelector('.candidate-name').textContent;
-                const party = card.querySelector('.party-badge').textContent;
-                candidatesList += `
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-user-tie me-2 text-primary"></i>
-                        <strong>${name}</strong> - ${party}
-                    </div>
-                `;
-            });
-            
-            const previewContent = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6 class="text-primary">Election Details</h6>
-                        <p><strong>Name:</strong> ${electionName || 'Not specified'}</p>
-                        <p><strong>Position:</strong> ${position || 'Not specified'}</p>
-                        <p><strong>Start Date:</strong> ${startDate ? new Date(startDate).toLocaleString() : 'Not specified'}</p>
-                        <p><strong>End Date:</strong> ${endDate ? new Date(endDate).toLocaleString() : 'Not specified'}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-primary">Selected Candidates (${selectedCandidates.length})</h6>
-                        ${candidatesList || '<p class="text-muted">No candidates selected</p>'}
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('previewContent').innerHTML = previewContent;
-            new bootstrap.Modal(document.getElementById('previewModal')).show();
-        }
-
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            // Set minimum date to today
-            const today = new Date().toISOString().slice(0, 16);
-            document.getElementById('starting_date').min = today;
-            document.getElementById('ending_date').min = today;
+            // Set minimum date to current date and time
+            const now = new Date();
+            const currentDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('starting_date').min = currentDateTime;
+            document.getElementById('ending_date').min = currentDateTime;
             
-            console.log('Create Election Form - Enhanced Design Loaded');
+            // Start live updates
+            updateCurrentDateTime();
+            dateTimeInterval = setInterval(updateCurrentDateTime, 1000); // Update every second
+            
+            // Update election status in database every 30 seconds
+            statusUpdateInterval = setInterval(updateElectionStatusInDatabase, 30000);
+            
+            // Initial status update
+            updateElectionStatusInDatabase();
+            
+            // Event listeners for date inputs
+            document.getElementById('starting_date').addEventListener('change', function() {
+                updateElectionPreview();
+                // Update minimum end date to be at least start date
+                document.getElementById('ending_date').min = this.value;
+            });
+            
+            document.getElementById('ending_date').addEventListener('change', updateElectionPreview);
+            
+            console.log('Create Election Form - Live Updates Enabled');
         });
-    </script> -->
+
+        // Cleanup intervals when page unloads
+        window.addEventListener('beforeunload', function() {
+            if (dateTimeInterval) {
+                clearInterval(dateTimeInterval);
+            }
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+            }
+        });
+
+        // Additional utility functions
+        function selectAllCandidates() {
+            const addButtons = document.querySelectorAll('a[href*="?id="]');
+            alert('Select All feature would select all candidates. In this implementation, you need to click each "Add" button individually.');
+        }
+
+        function refreshElectionData() {
+            // Force update election status
+            updateElectionStatusInDatabase();
+            updateElectionPreview();
+            
+            // Show notification
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                Election data refreshed successfully!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 3000);
+        }
+    </script>
   </body>
 </html>
