@@ -13,6 +13,7 @@ if(isset($_POST['username']) && isset($_POST['password'])){
     if(mysqli_num_rows($result) > 0) {
         $user=mysqli_fetch_assoc($result);
 
+        $_SESSION['id'] = $user['ID'];
         $_SESSION['firstName']=$user['firstName'];
         $_SESSION['lastName']=$user['lastName'];
         $_SESSION['email']=$user['email'];

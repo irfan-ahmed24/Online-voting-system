@@ -1,9 +1,13 @@
 <?php
+include "./../config.php";
 include "./../admin/fatchElection.php";
 include "./../admin/fatchCandidate.php";
+include "./../user_info.php";
 ?>
 <?php foreach
  ($elections as $election): 
+$election_id = $election['election_ID'];
+$user_id = $_SESSION['id'];
 $remainingTime = strtotime($election['ending_date']) - time();
 if ($remainingTime > 0) {
   $remainingDays = floor($remainingTime / (60 * 60 * 24));
@@ -15,6 +19,22 @@ if ($remainingTime > 0) {
   $timeRemainingText = "Election ended";
   $statusCalcolate=0;
 }
+
+?>
+<?php 
+$sql = "SELECT is_voted FROM Is_voted WHERE election_id = ? AND user_id = ?";
+if ($stmt = mysqli_prepare($conn, $sql)) {
+    mysqli_stmt_bind_param($stmt, "si", $election_id, $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (mysqli_num_rows($result) > 0) {
+        $statusCalcolate = 0;
+    }
+    else {
+        $statusCalcolate = 1;
+    }
+    mysqli_stmt_close($stmt);
+}
 ?>
 <div class="card mb-4 election-detail-card">
   <div class="card-header bg-success text-white">
@@ -22,6 +42,7 @@ if ($remainingTime > 0) {
       <div class="col-md-8">
         <h4 class="mb-1">
           <?php echo htmlspecialchars($election['election_name']) ?>
+          <?php echo htmlspecialchars($_SESSION['id']) ?>
         </h4>
         <p class="mb-0 opacity-75">
           Choose the next
@@ -119,11 +140,11 @@ if ($remainingTime > 0) {
             <p class="card-text small">
               <?php echo htmlspecialchars($candidate['massage']) ?>
             </p>
-            <a href="giveVote.php?election_id=<?php echo $election['election_ID'] ?>&candidate_id=<?php echo $candidate['ID'] ?>"
+            <a href="giveVote.php?election_id=<?php echo $election['election_ID'] ?>&candidate_id=<?php echo $candidate['ID'] ?>&user_id=<?php echo $_SESSION['id'] ?>"
               class="btn btn-outline-primary btn-sm w-100 <?php echo $statusCalcolate ? '' : 'disabled'; ?>"
               onclick="selectCandidate('<?php echo $candidate['firstName'];?>')"
             >
-              <i class="fas fa-vote-yea me-1"></i>Vote
+              <i class="fas fa-vote-yea me-1"></i><?php echo $statusCalcolate ? 'Vote' : 'Already Voted'; ?>
             </a>
           </div>
         </div>
