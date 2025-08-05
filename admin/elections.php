@@ -1,5 +1,5 @@
 <?php 
-// Fetch total candidates
+include './../config.php';
 $sql = "SELECT * FROM elections";
 $result = mysqli_query($conn, $sql);
 

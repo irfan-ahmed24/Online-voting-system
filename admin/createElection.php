@@ -43,12 +43,11 @@ if (isset($_POST['submit'])) {
     $now = date('Y-m-d H:i:s');
     if ($now >= $starting_date && $now <= $ending_date) {
       $status = 'active';
-    } elseif ($now < $starting_date) {
+    } elseif ($now <= $starting_date) {
       $status = 'upcoming';
     } else {
       $status = 'completed';
     }
-
     if (empty($election_name) || empty($position) || empty($starting_date) || empty($ending_date)) {
         $error_message = "All fields are required.";
         $displayError = "d-block";
