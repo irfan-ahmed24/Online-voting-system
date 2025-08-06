@@ -308,7 +308,7 @@ $totalVotes = $totalVotesRow['total_votes'] ? $totalVotesRow['total_votes'] : 0;
                       <?php
                         $election_id = $election['election_ID'];
                         $candidates_sql = "
-                          SELECT 
+                         SELECT 
                             c.ID,
                             c.firstName, 
                             c.lastName, 
@@ -325,10 +325,11 @@ $totalVotes = $totalVotesRow['total_votes'] ? $totalVotesRow['total_votes'] : 0;
                             candidate c ON vc.candidate_ID = c.ID
                           WHERE 
                             vc.election_ID = ?
-                          ORDER BY vc.find_votes DESC
+                          GROUP BY 
+                            c.ID
                         ";
                         $stmt = mysqli_prepare($conn, $candidates_sql);
-                        mysqli_stmt_bind_param($stmt, "s", $election_id);
+                        mysqli_stmt_bind_param($stmt, "i", $election_id);
                         mysqli_stmt_execute($stmt);
                         $candidates_result = mysqli_stmt_get_result($stmt);
                         $participating_candidates = [];
@@ -409,38 +410,6 @@ $totalVotes = $totalVotesRow['total_votes'] ? $totalVotesRow['total_votes'] : 0;
                             <?php $rank++; endforeach; ?>
                           </tbody>
                         </table>
-                      </div>
-                      
-                      <!-- Election Summary -->
-                      <div class="row mt-3">
-                        <div class="col-md-4">
-                          <div class="text-center p-2 bg-light rounded">
-                            <i class="fas fa-users text-primary"></i>
-                            <div class="fw-bold"><?php echo count($participating_candidates); ?></div>
-                            <small class="text-muted">Candidates</small>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="text-center p-2 bg-light rounded">
-                            <i class="fas fa-vote-yea text-success"></i>
-                            <div class="fw-bold"><?php echo number_format($total_election_votes); ?></div>
-                            <small class="text-muted">Total Votes</small>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="text-center p-2 bg-light rounded">
-                            <i class="fas fa-calendar text-info"></i>
-                            <div class="fw-bold">
-                              <?php 
-                              $end_date = new DateTime($election['ending_date']);
-                              $current_date = new DateTime();
-                              $days_left = $end_date->diff($current_date)->days;
-                              echo $days_left;
-                              ?>
-                            </div>
-                            <small class="text-muted">Days Left</small>
-                          </div>
-                        </div>
                       </div>
                       <?php endif; ?>
                       

@@ -236,6 +236,8 @@ if (mysqli_num_rows($result2) > 0) {
             <div class="card-body">
                 <?php
                 // Get all candidates participating in this specific election with their vote counts
+                $election_id = $election['election_ID'];
+                
                 $election_candidates_sql = "
                     SELECT 
                         c.ID,
@@ -253,7 +255,7 @@ if (mysqli_num_rows($result2) > 0) {
                 ";
                 
                 $stmt = mysqli_prepare($conn, $election_candidates_sql);
-                mysqli_stmt_bind_param($stmt, "s", $election['election_ID']);
+                mysqli_stmt_bind_param($stmt, "i", $election['election_ID']);
                 mysqli_stmt_execute($stmt);
                 $election_candidates_result = mysqli_stmt_get_result($stmt);
                 $election_candidates = [];
