@@ -127,11 +127,9 @@ include './fatchElection.php';
                             candidate c ON vc.candidate_ID = c.ID
                           WHERE 
                             vc.election_ID = ?
-                          GROUP BY 
-                            c.ID
                           ";
                         $stmt = mysqli_prepare($conn, $candidates_sql);
-                        mysqli_stmt_bind_param($stmt, "i", $election_id);
+                        mysqli_stmt_bind_param($stmt, "s", $election_id);
                         mysqli_stmt_execute($stmt);
                         $candidates_result = mysqli_stmt_get_result($stmt);
                         $participating_candidates = [];

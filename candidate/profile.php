@@ -209,7 +209,7 @@ if (mysqli_num_rows($result2) > 0) {
         ";
         
         $stmt = mysqli_prepare($conn, $participating_elections_sql);
-        mysqli_stmt_bind_param($stmt, "i", $current_candidate_id);
+        mysqli_stmt_bind_param($stmt, "s", $current_candidate_id);
         mysqli_stmt_execute($stmt);
         $participating_elections_result = mysqli_stmt_get_result($stmt);
         $participating_elections = [];
@@ -239,23 +239,27 @@ if (mysqli_num_rows($result2) > 0) {
                 $election_id = $election['election_ID'];
                 
                 $election_candidates_sql = "
-                    SELECT 
-                        c.ID,
-                        c.firstName,
-                        c.lastName,
-                        c.groupName,
-                        vc.find_votes
-                    FROM 
-                        vote_counts vc
-                    JOIN 
-                        candidate c ON vc.candidate_ID = c.ID
-                    WHERE 
-                        vc.election_ID = ?
-                    ORDER BY vc.find_votes DESC
-                ";
+                            SELECT 
+                            c.ID,
+                            c.firstName, 
+                            c.lastName, 
+                            c.email,
+                            c.phone,
+                            c.profilePic,
+                            c.groupName,
+                            c.massage,
+                            c.gender,
+                            vc.find_votes
+                          FROM 
+                            vote_counts vc
+                          JOIN 
+                            candidate c ON vc.candidate_ID = c.ID
+                          WHERE 
+                            vc.election_ID = ?
+                          ";
                 
                 $stmt = mysqli_prepare($conn, $election_candidates_sql);
-                mysqli_stmt_bind_param($stmt, "i", $election['election_ID']);
+                mysqli_stmt_bind_param($stmt, "s", $election['election_ID']);
                 mysqli_stmt_execute($stmt);
                 $election_candidates_result = mysqli_stmt_get_result($stmt);
                 $election_candidates = [];
